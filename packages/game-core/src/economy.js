@@ -149,7 +149,6 @@ export function useItem(discordId, username, itemId) {
     return { ok: true, message: 'Reversal Kit used. Released from infirmary!', player: getOrCreatePlayer(discordId, username) };
   }
   if (effects.grabBag) {
-    const { openGrabBag } = await import('./phase3.js');
     return openGrabBag(discordId, username, true);
   }
   return { ok: false, message: 'This item cannot be used right now.' };
