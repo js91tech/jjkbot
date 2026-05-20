@@ -20,6 +20,46 @@ npm run start:web   # terminal 2
 
 Open http://localhost:3847 and log in with Discord.
 
+## Deploy on Railway (GitHub: js91tech/jjkbot)
+
+Use **two services** from the same repo, plus a **volume** on both (mount `/data`).
+
+### Service 1 — Web (`railway.toml`)
+
+| Setting | Value |
+|--------|--------|
+| Config file | `railway.toml` (default) |
+| Volume | `/data` |
+| `SERVICE` | `web` (set in Variables or use default) |
+| `DATABASE_PATH` | `/data/jjk.db` |
+| `WEB_BASE_URL` | `https://<your-web-service>.up.railway.app` |
+| `SESSION_SECRET` | long random string |
+| `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET` | OAuth |
+| `PORT` | set automatically by Railway |
+
+Discord OAuth redirect: `https://<web-url>/oauth/callback`
+
+### Service 2 — Discord bot (`railway.bot.toml`)
+
+| Setting | Value |
+|--------|--------|
+| Config file | `railway.bot.toml` |
+| Volume | `/data` (same DB as web) |
+| `SERVICE` | `bot` |
+| `DATABASE_PATH` | `/data/jjk.db` |
+| `DISCORD_TOKEN` | bot token |
+| `DISCORD_CLIENT_ID` | app id (for slash register) |
+
+After first deploy, run once in the bot service shell:
+
+```bash
+npm run register -w @jjk/discord-bot
+```
+
+### Docker (optional)
+
+Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process. See `Dockerfile` and `scripts/railway-start.sh`.
+
 ## Architecture
 
 - `packages/game-core` — all rules, DB, ticks (CE regen, hospital/jail)

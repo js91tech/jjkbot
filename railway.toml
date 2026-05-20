@@ -1,0 +1,13 @@
+# Web UI service — in Railway: attach this file as config-as-code (default path).
+# Create a second service for the bot using railway.bot.toml (see README).
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "SERVICE=web ./scripts/railway-start.sh"
+healthcheckPath = "/"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

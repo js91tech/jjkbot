@@ -10,7 +10,7 @@ const root = path.resolve(__dirname, '../../..');
 process.env.DATABASE_PATH = process.env.DATABASE_PATH || path.join(root, 'data/jjk.db');
 
 const app = express();
-const port = Number(process.env.WEB_PORT) || 3847;
+const port = Number(process.env.PORT || process.env.WEB_PORT) || 3847;
 const baseUrl = process.env.WEB_BASE_URL || `http://localhost:${port}`;
 
 app.set('view engine', 'ejs');
