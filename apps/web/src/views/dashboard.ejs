@@ -1,0 +1,61 @@
+<%- include('partials/head', { loggedIn: true, title: 'Dashboard' }) %>
+<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+<h1><%= player.username %> &mdash; <%= player.grade %> (Lv.<%= player.level %>)</h1>
+<div class="grid">
+  <div class="panel">
+    <h3>Stats</h3>
+    <p>Coins: <%= player.coins.toLocaleString() %> | Bank: <%= player.bank_balance.toLocaleString() %></p>
+    <p>CE: <%= player.ce %>/100 | Focus: <%= player.focus %> | Strength: <%= player.strength %></p>
+    <p>Bravery: <%= player.bravery %> | Rice: <%= player.rice %> | Objects: <%= player.gold_objects %></p>
+    <% if (status.hospital_until) { %><p>Infirmary until <%= status.hospital_until %></p><% } %>
+    <% if (status.jail_until) { %><p>Prison Realm until <%= status.jail_until %></p><% } %>
+    <p class="stat">Wheel spins left: <%= status.wheel_spins_left %></p>
+  </div>
+  <div class="panel">
+    <h3>Train</h3>
+    <form method="post" action="/train">
+      <input type="number" name="sets" value="1" min="1" max="20" />
+      <button type="submit">Train</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Mission</h3>
+    <form method="post" action="/crime">
+      <select name="mission">
+        <option value="petty_cleanup">Petty Cleanup</option>
+        <option value="grade4_patrol">Grade-4 Patrol</option>
+        <option value="shibuya_raid">Shibuya Sweep</option>
+        <option value="special_exorcism">Special Exorcism</option>
+      </select>
+      <button type="submit">Run</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>CE Lounge</h3>
+    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="tea" /><button>Tea</button></form>
+    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="vow" /><button>Vow</button></form>
+    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="refill" /><button>Refill</button></form>
+  </div>
+  <div class="panel">
+    <h3>Work and Wheel</h3>
+    <form method="post" action="/work"><button>Work Job</button></form>
+    <form method="post" action="/wheel"><button>Spin Wheel</button></form>
+  </div>
+  <div class="panel">
+    <h3>Bank</h3>
+    <form method="post" action="/bank">
+      <select name="action"><option value="deposit">Deposit</option><option value="withdraw">Withdraw</option><option value="invest">Invest</option><option value="collect">Collect</option></select>
+      <input type="number" name="amount" placeholder="Amount" />
+      <button>Go</button>
+    </form>
+  </div>
+</div>
+<div class="panel">
+  <h3>Inventory</h3>
+  <ul>
+    <% inventory.forEach(function(i) { %>
+      <li><%= i.name %> x<%= i.quantity %></li>
+    <% }); %>
+  </ul>
+</div>
+<%- include('partials/foot') %>

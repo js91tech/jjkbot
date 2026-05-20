@@ -1,0 +1,194 @@
+import { getOrCreatePlayer, getPlayerByDiscord, getInventory, getStatus } from './player.js';
+import { train } from './train.js';
+import { loungeAction } from './lounge.js';
+import { listCrimes, commitCrime } from './crime.js';
+import {
+  bank as bankAction,
+  collectInvestment as collectInvestmentAction,
+  shopList,
+  shopBuy as shopBuyAction,
+  work as workAction,
+  setJob as setJobAction,
+  useItem as useItemAction
+} from './economy.js';
+import { attack as attackAction, mug as mugAction, rob as robAction, bustOut } from './pvp.js';
+import { spinWheel } from './wheel.js';
+import {
+  listEducation,
+  enrollEducation,
+  listClans,
+  joinClan as joinClanAction,
+  clanDeposit as clanDepositAction,
+  listEstates,
+  buyEstate as buyEstateAction,
+  marketList as createMarketListing,
+  marketBrowse as browseMarket,
+  marketBuy as buyMarketListing,
+  goldList as createGoldListing,
+  goldBrowse as browseGoldMarket,
+  goldBuy as buyGoldListing,
+  forge as forgeAction,
+  listCommodities,
+  tradeCommodity
+} from './phase2.js';
+import {
+  delve as delveAction,
+  endDelve as endDelveAction,
+  buyGrabBags as buyGrabBagsAction,
+  openGrabBag as openGrabBagAction,
+  leaderboard as fetchLeaderboard,
+  setWorld as setWorldAction,
+  adminAction
+} from './phase3.js';
+import { startTickScheduler } from './tick.js';
+import { getDb } from './db.js';
+
+export class GameService {
+  static startScheduler() {
+    return startTickScheduler(60000);
+  }
+
+  static profile(discordId, username) {
+    const p = getOrCreatePlayer(discordId, username);
+    return { player: p, status: getStatus(p), inventory: getInventory(p.id) };
+  }
+
+  static status(discordId, username) {
+    const p = getOrCreatePlayer(discordId, username);
+    return getStatus(p);
+  }
+
+  static train(discordId, username, sets) {
+    return train(discordId, username, sets);
+  }
+  static lounge(discordId, username, action) {
+    return loungeAction(discordId, username, action);
+  }
+  static crimes(discordId, username) {
+    return listCrimes(discordId, username);
+  }
+  static crime(discordId, username, id) {
+    return commitCrime(discordId, username, id);
+  }
+  static bank(discordId, username, action, amount) {
+    return bankAction(discordId, username, action, amount);
+  }
+  static collectInvestment(discordId, username) {
+    return collectInvestmentAction(discordId, username);
+  }
+  static shop() {
+    return shopList();
+  }
+  static shopBuy(discordId, username, itemId, qty) {
+    return shopBuyAction(discordId, username, itemId, qty);
+  }
+  static work(discordId, username) {
+    return workAction(discordId, username);
+  }
+  static setJob(discordId, username, jobId) {
+    return setJobAction(discordId, username, jobId);
+  }
+  static useItem(discordId, username, itemId) {
+    return useItemAction(discordId, username, itemId);
+  }
+  static attack(discordId, username, targetId) {
+    return attackAction(discordId, username, targetId);
+  }
+  static mug(discordId, username, targetId) {
+    return mugAction(discordId, username, targetId);
+  }
+  static rob(discordId, username, targetId) {
+    return robAction(discordId, username, targetId);
+  }
+  static bust(discordId, username, targetId) {
+    return bustOut(discordId, username, targetId);
+  }
+  static wheel(discordId, username) {
+    return spinWheel(discordId, username);
+  }
+
+  static educationList() {
+    return listEducation();
+  }
+  static educationEnroll(discordId, username, courseId) {
+    return enrollEducation(discordId, username, courseId);
+  }
+  static clans() {
+    return listClans();
+  }
+  static joinClan(discordId, username, clanId) {
+    return joinClanAction(discordId, username, clanId);
+  }
+  static clanDeposit(discordId, username, amount) {
+    return clanDepositAction(discordId, username, amount);
+  }
+  static estates() {
+    return listEstates();
+  }
+  static buyEstate(discordId, username, tier) {
+    return buyEstateAction(discordId, username, tier);
+  }
+  static marketBrowse() {
+    return browseMarket();
+  }
+  static marketList(discordId, username, itemId, qty, price) {
+    return createMarketListing(discordId, username, itemId, qty, price);
+  }
+  static marketBuy(discordId, username, listingId) {
+    return buyMarketListing(discordId, username, listingId);
+  }
+  static goldBrowse() {
+    return browseGoldMarket();
+  }
+  static goldList(discordId, username, amount, price) {
+    return createGoldListing(discordId, username, amount, price);
+  }
+  static goldBuy(discordId, username, listingId) {
+    return buyGoldListing(discordId, username, listingId);
+  }
+  static forge(discordId, username) {
+    return forgeAction(discordId, username);
+  }
+  static commodities() {
+    return listCommodities();
+  }
+  static commodityTrade(discordId, username, id, qty, action) {
+    return tradeCommodity(discordId, username, id, qty, action);
+  }
+
+  static delve(discordId, username) {
+    return delveAction(discordId, username);
+  }
+  static endDelve(discordId, username) {
+    return endDelveAction(discordId, username);
+  }
+  static buyGrabBags(discordId, username, count) {
+    return buyGrabBagsAction(discordId, username, count);
+  }
+  static openGrabBag(discordId, username) {
+    return openGrabBagAction(discordId, username, true);
+  }
+  static leaderboard(kind) {
+    return fetchLeaderboard(kind);
+  }
+  static setWorld(discordId, username, worldId) {
+    return setWorldAction(discordId, username, worldId);
+  }
+  static admin(adminId, action, targetId, value) {
+    return adminAction(adminId, action, targetId, value);
+  }
+
+  static listPlayers(limit = 20) {
+    return getDb()
+      .prepare(
+        'SELECT id, discord_id, username, level, coins FROM players WHERE banned = 0 ORDER BY level DESC LIMIT ?'
+      )
+      .all(limit);
+  }
+
+  static getPlayerByDiscord(discordId) {
+    return getPlayerByDiscord(discordId);
+  }
+}
+
+export { getOrCreatePlayer, getPlayerByDiscord, getInventory, getStatus };

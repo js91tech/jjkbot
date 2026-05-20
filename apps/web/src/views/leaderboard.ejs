@@ -1,0 +1,15 @@
+<%- include('partials/head', { loggedIn: false, title: 'Leaderboard' }) %>
+<h1>Leaderboard — <%= type %></h1>
+<p>
+  <a href="/leaderboard?type=level">Level</a> |
+  <a href="/leaderboard?type=wealth">Wealth</a> |
+  <a href="/leaderboard?type=strength">Strength</a> |
+  <a href="/leaderboard?type=pvp">PvP</a>
+</p>
+<ol>
+  <% rows.forEach(function(r, i) { %>
+    <li><%= r.username %> — <% if (r.wins != null) { %><%= r.wins %> wins<% } else { %>Lv.<%= r.level %> <% if (r.coins != null) { %>(<%= (r.coins + (r.bank_balance||0)).toLocaleString() %> wealth)<% } %><% } %></li>
+  <% }); %>
+</ol>
+<p><a href="/">Home</a></p>
+<%- include('partials/foot') %>

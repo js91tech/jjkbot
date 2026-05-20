@@ -1,0 +1,50 @@
+import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { GameService } from '@jjk/game-core';
+import { handleCommand } from './commands.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+process.env.DATABASE_PATH =
+  process.env.DATABASE_PATH || path.resolve(__dirname, '../../../data/jjk.db');
+
+if (!process.env.DISCORD_TOKEN) {
+  console.error('DISCORD_TOKEN required');
+  process.exit(1);
+}
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const stopTicks = GameService.startScheduler();
+
+client.once(Events.ClientReady, (c) => {
+  console.log(`JJK-Bot logged in as ${c.user.tag}`);
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+  try {
+    const result = await handleCommand(interaction);
+    if (result.embed) {
+      await interaction.reply({ embeds: [result.embed], ephemeral: result.ephemeral });
+    } else {
+      await interaction.reply({ content: result.content, ephemeral: result.ephemeral });
+    }
+  } catch (err) {
+    console.error(err);
+    const msg = err.message || 'Something went wrong.';
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: msg, ephemeral: true });
+    } else {
+      await interaction.reply({ content: msg, ephemeral: true });
+    }
+  }
+});
+
+client.login(process.env.DISCORD_TOKEN);
+
+process.on('SIGINT', () => {
+  stopTicks();
+  client.destroy();
+  process.exit(0);
+});

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= typeof title !== 'undefined' ? title : 'JJK-Bot' %></title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+<header>
+  <strong>JJK Sorcerer MUD</strong>
+  <nav>
+    <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
+      <a href="/dashboard">Dashboard</a> |
+      <a href="/shop">Shop</a> |
+      <a href="/pvp">PvP</a> |
+      <a href="/advanced">Advanced</a> |
+      <a href="/leaderboard">Leaderboard</a> |
+      <a href="/logout">Logout</a>
+    <% } else { %>
+      <a href="/leaderboard">Leaderboard</a> |
+      <a href="/login">Login</a>
+    <% } %>
+  </nav>
+</header>
+<main>

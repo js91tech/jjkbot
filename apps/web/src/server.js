@@ -1,0 +1,196 @@
+import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express from 'express';
+import session from 'express-session';
+import { GameService } from '@jjk/game-core';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '../../..');
+process.env.DATABASE_PATH = process.env.DATABASE_PATH || path.join(root, 'data/jjk.db');
+
+const app = express();
+const port = Number(process.env.WEB_PORT) || 3847;
+const baseUrl = process.env.WEB_BASE_URL || `http://localhost:${port}`;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
+  })
+);
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+const stopTicks = GameService.startScheduler();
+
+function requireAuth(req, res, next) {
+  if (!req.session.discordId) return res.redirect('/login');
+  next();
+}
+
+app.get('/', (req, res) => {
+  if (req.session.discordId) return res.redirect('/dashboard');
+  res.render('home', { baseUrl });
+});
+
+app.get('/login', (req, res) => {
+  const clientId = process.env.DISCORD_CLIENT_ID;
+  if (!clientId) return res.status(500).send('Set DISCORD_CLIENT_ID in .env');
+  const redirect = encodeURIComponent(`${baseUrl}/oauth/callback`);
+  const scope = encodeURIComponent('identify');
+  res.redirect(
+    `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirect}&response_type=code&scope=${scope}`
+  );
+});
+
+app.get('/oauth/callback', async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.redirect('/');
+  try {
+    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: process.env.DISCORD_CLIENT_ID,
+        client_secret: process.env.DISCORD_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: `${baseUrl}/oauth/callback`
+      })
+    });
+    const token = await tokenRes.json();
+    if (!token.access_token) throw new Error('OAuth failed');
+    const userRes = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${token.access_token}` }
+    });
+    const user = await userRes.json();
+    req.session.discordId = user.id;
+    req.session.username = user.username;
+    GameService.profile(user.id, user.username);
+    res.redirect('/dashboard');
+  } catch (e) {
+    console.error(e);
+    res.status(500).send('Login failed. Check OAuth redirect URL in Discord developer portal.');
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => res.redirect('/'));
+});
+
+app.get('/me', requireAuth, (req, res) => {
+  const { player, status, inventory } = GameService.profile(req.session.discordId, req.session.username);
+  res.json({ player, status, inventory });
+});
+
+app.get('/dashboard', requireAuth, (req, res) => {
+  const { player, status, inventory } = GameService.profile(req.session.discordId, req.session.username);
+  const players = GameService.listPlayers(15).filter((p) => p.discord_id !== req.session.discordId);
+  res.render('dashboard', { player, status, inventory, players, flash: req.query.msg });
+});
+
+app.post('/train', requireAuth, (req, res) => {
+  const r = GameService.train(req.session.discordId, req.session.username, Number(req.body.sets) || 1);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/crime', requireAuth, (req, res) => {
+  const r = GameService.crime(req.session.discordId, req.session.username, req.body.mission);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/work', requireAuth, (req, res) => {
+  const r = GameService.work(req.session.discordId, req.session.username);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/wheel', requireAuth, (req, res) => {
+  const r = GameService.wheel(req.session.discordId, req.session.username);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/lounge', requireAuth, (req, res) => {
+  const r = GameService.lounge(req.session.discordId, req.session.username, req.body.action);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/bank', requireAuth, (req, res) => {
+  let r;
+  if (req.body.action === 'collect') r = GameService.collectInvestment(req.session.discordId, req.session.username);
+  else r = GameService.bank(req.session.discordId, req.session.username, req.body.action, req.body.amount);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.get('/shop', requireAuth, (req, res) => {
+  res.render('shop', { items: GameService.shop(), flash: req.query.msg });
+});
+
+app.post('/shop/buy', requireAuth, (req, res) => {
+  const r = GameService.shopBuy(req.session.discordId, req.session.username, req.body.item, req.body.quantity);
+  res.redirect('/shop?msg=' + encodeURIComponent(r.message));
+});
+
+app.get('/pvp', requireAuth, (req, res) => {
+  const players = GameService.listPlayers(30).filter((p) => p.discord_id !== req.session.discordId);
+  res.render('pvp', { players, flash: req.query.msg });
+});
+
+app.post('/pvp', requireAuth, (req, res) => {
+  const { action, target } = req.body;
+  let r;
+  if (action === 'attack') r = GameService.attack(req.session.discordId, req.session.username, target);
+  else if (action === 'mug') r = GameService.mug(req.session.discordId, req.session.username, target);
+  else r = GameService.rob(req.session.discordId, req.session.username, target);
+  res.redirect('/pvp?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/bust', requireAuth, (req, res) => {
+  const r = GameService.bust(req.session.discordId, req.session.username, req.body.target);
+  res.redirect('/pvp?msg=' + encodeURIComponent(r.message));
+});
+
+app.get('/advanced', requireAuth, (req, res) => {
+  res.render('advanced', {
+    clans: GameService.clans(),
+    estates: GameService.estates(),
+    education: GameService.educationList(),
+    commodities: GameService.commodities(),
+    market: GameService.marketBrowse(),
+    gold: GameService.goldBrowse(),
+    flash: req.query.msg
+  });
+});
+
+app.post('/advanced', requireAuth, (req, res) => {
+  const { type } = req.body;
+  let r = { message: 'Unknown' };
+  const id = req.session.discordId;
+  const name = req.session.username;
+  if (type === 'joinClan') r = GameService.joinClan(id, name, req.body.clanId);
+  if (type === 'buyEstate') r = GameService.buyEstate(id, name, Number(req.body.tier));
+  if (type === 'enroll') r = GameService.educationEnroll(id, name, req.body.courseId);
+  if (type === 'forge') r = GameService.forge(id, name);
+  if (type === 'delve') r = GameService.delve(id, name);
+  if (type === 'grabbag') r = GameService.openGrabBag(id, name);
+  if (type === 'commodity') r = GameService.commodityTrade(id, name, req.body.commId, Number(req.body.qty), req.body.action);
+  res.redirect('/advanced?msg=' + encodeURIComponent(r.message));
+});
+
+app.get('/leaderboard', (req, res) => {
+  res.render('leaderboard', {
+    rows: GameService.leaderboard(req.query.type || 'level'),
+    type: req.query.type || 'level'
+  });
+});
+
+app.listen(port, () => console.log(`JJK web UI http://localhost:${port}`));
+
+process.on('SIGINT', () => {
+  stopTicks();
+  process.exit(0);
+});

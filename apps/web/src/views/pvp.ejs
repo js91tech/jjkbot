@@ -1,0 +1,19 @@
+<%- include('partials/head', { loggedIn: true, title: 'PvP' }) %>
+<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+<h1>PvP — Duel, Mug, Rob</h1>
+<% players.forEach(function(p) { %>
+  <div class="panel">
+    <strong><%= p.username %></strong> — Lv.<%= p.level %> (<%= p.coins.toLocaleString() %> coins on hand)
+    <form method="post" action="/pvp" style="margin-top:0.5rem">
+      <input type="hidden" name="target" value="<%= p.discord_id %>" />
+      <button name="action" value="attack">Attack</button>
+      <button name="action" value="mug">Mug</button>
+      <button name="action" value="rob">Rob</button>
+    </form>
+    <form method="post" action="/bust" style="margin-top:0.5rem">
+      <input type="hidden" name="target" value="<%= p.discord_id %>" />
+      <button>Bust from Prison Realm</button>
+    </form>
+  </div>
+<% }); %>
+<%- include('partials/foot') %>

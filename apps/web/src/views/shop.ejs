@@ -1,0 +1,15 @@
+<%- include('partials/head', { loggedIn: true, title: 'Shop' }) %>
+<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+<h1>Relic Shop</h1>
+<% items.forEach(function(item) { %>
+  <div class="panel">
+    <strong><%= item.name %></strong> — <%= item.shop_price %> coins
+    <p class="stat"><%= item.description %></p>
+    <form method="post" action="/shop/buy">
+      <input type="hidden" name="item" value="<%= item.id %>" />
+      <input type="number" name="quantity" value="1" min="1" max="99" />
+      <button>Buy</button>
+    </form>
+  </div>
+<% }); %>
+<%- include('partials/foot') %>
