@@ -6,7 +6,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "SERVICE=web ./scripts/railway-start.sh"
+startCommand = "sh -c 'SERVICE=web ./scripts/railway-start.sh'"
 healthcheckPath = "/"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"

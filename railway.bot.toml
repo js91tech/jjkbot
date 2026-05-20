@@ -6,6 +6,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "SERVICE=bot ./scripts/railway-start.sh"
+startCommand = "sh -c 'SERVICE=bot ./scripts/railway-start.sh'"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10

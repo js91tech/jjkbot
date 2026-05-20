@@ -56,6 +56,23 @@ After first deploy, run once in the bot service shell:
 npm run register -w @jjk/discord-bot
 ```
 
+### Railway UI (no Docker) — simplest start commands
+
+If you use **Railpack** (not Dockerfile), set **Deploy → Start command** to:
+
+| Service | Start command |
+|---------|----------------|
+| Bot | `npm run start -w @jjk/discord-bot` |
+| Web | `npm run start -w @jjk/web` |
+
+Do **not** put `SERVICE=web` in the start command box — Railway treats that as the program name. Set `SERVICE` in **Variables** only if using `railway-start.sh`.
+
+**Config-as-code:** Bot service → `railway.bot.toml` path. Web service → `railway.toml` or leave default.
+
+### Volumes on Railway
+
+If you do not see **Volumes** under Settings: open the **project canvas** (graph view) → click **+** or **Create** → **Volume** → attach to service → mount path `/data`. Or use the **Command Palette** (Ctrl/Cmd+K) → “Add Volume”. Requires a paid plan on some accounts.
+
 ### Docker (optional)
 
 Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process. See `Dockerfile` and `scripts/railway-start.sh`.
