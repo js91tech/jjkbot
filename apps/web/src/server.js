@@ -26,6 +26,10 @@ app.use(
 );
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+app.get('/health', (_req, res) => {
+  res.status(200).send('ok');
+});
+
 const stopTicks = GameService.startScheduler();
 
 function requireAuth(req, res, next) {
@@ -188,7 +192,7 @@ app.get('/leaderboard', (req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`JJK web UI http://localhost:${port}`));
+app.listen(port, '0.0.0.0', () => console.log(`JJK web UI listening on 0.0.0.0:${port}`));
 
 process.on('SIGINT', () => {
   stopTicks();

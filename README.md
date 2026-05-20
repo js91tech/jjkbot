@@ -26,9 +26,12 @@ Use **two services** from the same repo, plus a **volume** on both (mount `/data
 
 ### Service 1 — Web (`railway.toml`)
 
+**Common failure:** healthcheck fails if this service runs `@jjk/discord-bot` instead of `@jjk/web`. Bot service must use `railway.bot.toml`, not `railway.toml`.
+
 | Setting | Value |
 |--------|--------|
-| Config file | `railway.toml` (default) |
+| Config file | `railway.toml` only (not `railway.bot.toml`) |
+| Custom Start Command | `npm run start -w @jjk/web` or leave empty |
 | Volume | `/data` |
 | `SERVICE` | `web` (set in Variables or use default) |
 | `DATABASE_PATH` | `/data/jjk.db` |
