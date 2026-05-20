@@ -11,7 +11,23 @@ process.env.DATABASE_PATH = process.env.DATABASE_PATH || path.join(root, 'data/j
 
 const app = express();
 const port = Number(process.env.PORT || process.env.WEB_PORT) || 3847;
-const baseUrl = process.env.WEB_BASE_URL || `http://localhost:${port}`;
+
+/** Public URL for OAuth — must match Discord Developer Portal redirect exactly. */
+function getBaseUrl() {
+  if (process.env.WEB_BASE_URL) {
+    return process.env.WEB_BASE_URL.replace(/\/$/, '');
+  }
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+    return `https://${process.env.RAILWAY_PUBLIC_DOMAIN.replace(/\/$/, '')}`;
+  }
+  if (process.env.RAILWAY_STATIC_URL) {
+    return process.env.RAILWAY_STATIC_URL.replace(/\/$/, '');
+  }
+  return `http://localhost:${port}`;
+}
+
+const baseUrl = getBaseUrl();
+const oauthRedirectUri = `${baseUrl}/oauth/callback`;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -44,8 +60,8 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
   const clientId = process.env.DISCORD_CLIENT_ID;
-  if (!clientId) return res.status(500).send('Set DISCORD_CLIENT_ID in .env');
-  const redirect = encodeURIComponent(`${baseUrl}/oauth/callback`);
+  if (!clientId) return res.status(500).send('Set DISCORD_CLIENT_ID in Railway variables.');
+  const redirect = encodeURIComponent(oauthRedirectUri);
   const scope = encodeURIComponent('identify');
   res.redirect(
     `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirect}&response_type=code&scope=${scope}`
@@ -64,7 +80,7 @@ app.get('/oauth/callback', async (req, res) => {
         client_secret: process.env.DISCORD_CLIENT_SECRET,
         grant_type: 'authorization_code',
         code,
-        redirect_uri: `${baseUrl}/oauth/callback`
+        redirect_uri: oauthRedirectUri
       })
     });
     const token = await tokenRes.json();
@@ -192,7 +208,10 @@ app.get('/leaderboard', (req, res) => {
   });
 });
 
-app.listen(port, '0.0.0.0', () => console.log(`JJK web UI listening on 0.0.0.0:${port}`));
+app.listen(port, '0.0.0.0', () => {
+  console.log(`JJK web UI listening on 0.0.0.0:${port}`);
+  console.log(`OAuth redirect URI (add this in Discord portal): ${oauthRedirectUri}`);
+});
 
 process.on('SIGINT', () => {
   stopTicks();
