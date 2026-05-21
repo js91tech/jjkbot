@@ -1,8 +1,11 @@
-# Web service — Railway config-as-code
-# Deploy → clear "Custom Start Command" in UI if deploy still fails (let this file control it).
+# Use on BOTH Railway services (same config file path: railway.toml).
+# Set variable on each service:
+#   Web service → SERVICE=web
+#   Bot service → SERVICE=bot
+# Or name services with "web" / "bot" in the name (auto-detected).
 
 [deploy]
-startCommand = "npm run start -w @jjk/discord-bot"
+startCommand = "npm run start:railway"
 healthcheckPath = "/health"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"

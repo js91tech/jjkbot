@@ -24,14 +24,25 @@ Open http://localhost:3847 and log in with Discord.
 
 Use **two services** from the same repo, plus a **volume** on both (mount `/data`).
 
-### Service 1 — Web (`railway.toml`)
+### Railway start command (both services)
 
-**Common failure:** healthcheck fails if this service runs `@jjk/discord-bot` instead of `@jjk/web`. Bot service must use `railway.bot.toml`, not `railway.toml`.
+Railway often applies root `railway.toml` to every service. Use **one config file** and **`SERVICE`** so each service starts the right app:
+
+| Service | Config file | Variable |
+|---------|-------------|----------|
+| Web | `railway.toml` | `SERVICE=web` |
+| Bot | `railway.toml` | `SERVICE=bot` |
+
+**Deploy → Start command** (both): `npm run start:railway`  
+Or leave empty and let `railway.toml` set it.
+
+Logs should show `Railway start: web` or `Railway start: bot`.
+
+### Service 1 — Web
 
 | Setting | Value |
 |--------|--------|
-| Config file | `railway.toml` only (not `railway.bot.toml`) |
-| Custom Start Command | `npm run start -w @jjk/web` or leave empty |
+| `SERVICE` | `web` |
 | Volume | `/data` |
 | `SERVICE` | `web` (set in Variables or use default) |
 | `DATABASE_PATH` | `/data/jjk.db` |
@@ -42,11 +53,11 @@ Use **two services** from the same repo, plus a **volume** on both (mount `/data
 
 Discord OAuth redirect: `https://<web-url>/oauth/callback`
 
-### Service 2 — Discord bot (`railway.bot.toml`)
+### Service 2 — Discord bot
 
 | Setting | Value |
 |--------|--------|
-| Config file | `railway.bot.toml` |
+| `SERVICE` | `bot` |
 | Volume | `/data` (same DB as web) |
 | `SERVICE` | `bot` |
 | `DATABASE_PATH` | `/data/jjk.db` |
