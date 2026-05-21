@@ -14,11 +14,17 @@ body.page-dashboard {
   background: #08060f;
 }
 
+body.page-jjk::before {
+  display: none;
+}
+
 body.page-jjk header,
 body.page-dashboard header {
+  position: relative;
+  z-index: 100;
   max-width: 1280px;
   border-bottom: 2px solid rgba(124, 58, 237, 0.4);
-  background: linear-gradient(180deg, rgba(12, 8, 24, 0.95), rgba(8, 6, 16, 0.85));
+  background: linear-gradient(180deg, rgba(12, 8, 24, 0.98), rgba(8, 6, 16, 0.92));
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
@@ -37,13 +43,37 @@ body.page-dashboard header strong {
 
 body.page-jjk nav a,
 body.page-dashboard nav a {
+  color: #cbd5e1;
   font-size: 0.82rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-decoration: none;
+}
+
+body.page-jjk nav a:hover,
+body.page-dashboard nav a:hover {
+  color: #22d3ee;
+}
+
+body.page-jjk .site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  align-items: center;
+}
+
+body.page-jjk .site-nav a {
+  padding: 0.35rem 0.5rem;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(124, 58, 237, 0.35);
 }
 
 body.page-jjk main,
 body.page-dashboard main {
+  position: relative;
+  z-index: 2;
   max-width: 1280px;
   padding: 0.75rem 1rem 2.5rem;
 }
@@ -51,30 +81,27 @@ body.page-dashboard main {
 .jjk-page,
 .dash-page {
   position: relative;
-  isolation: isolate;
+  z-index: 1;
 }
 
 .jjk-bg,
 .dash-bg {
   position: fixed;
   inset: 0;
-  z-index: -2;
-  background:
-    url('/public/assets/dashboard-reference.png') center top / cover no-repeat,
-    linear-gradient(180deg, #1a0a2e 0%, #08060f 55%, #050408 100%);
-  filter: brightness(0.55) saturate(1.15);
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(165deg, #1a0a2e 0%, #12081f 38%, #08060f 72%, #050408 100%);
 }
 
 .jjk-vignette,
 .dash-vignette {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(76, 29, 149, 0.35), transparent 55%),
-    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0, 0, 0, 0.85), transparent 50%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, 0.5) 100%);
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(124, 58, 237, 0.22), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0, 0, 0, 0.55), transparent 55%);
 }
 
 .dash-ornament {
