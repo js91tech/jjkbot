@@ -33,6 +33,7 @@ export async function handleCommand(interaction) {
     return {
       content:
         `**${s.grade}** Lv.${s.level} | CE ${s.ce} | Wheel spins left: ${s.wheel_spins_left}\n` +
+        `STR ${s.strength} DEF ${s.defense} SPD ${s.speed} DEX ${s.dexterity}\n` +
         (s.hospital_until ? `Infirmary until: ${s.hospital_until}\n` : '') +
         (s.jail_until ? `Prison Realm until: ${s.jail_until}\n` : '') +
         `Login streak: ${s.login_streak}`
@@ -40,7 +41,15 @@ export async function handleCommand(interaction) {
   }
 
   if (cmd === 'train') {
-    return reply(GameService.train(uid, name, interaction.options.getInteger('sets') || 1), interaction);
+    return reply(
+      GameService.train(
+        uid,
+        name,
+        interaction.options.getInteger('sets') || 1,
+        interaction.options.getString('stat') || 'strength'
+      ),
+      interaction
+    );
   }
   if (cmd === 'crime') {
     return reply(GameService.crime(uid, name, interaction.options.getString('mission')), interaction);
@@ -166,7 +175,14 @@ export async function handleCommand(interaction) {
   if (cmd === 'leaderboard') {
     const rows = GameService.leaderboard(interaction.options.getString('type') || 'level');
     return {
-      content: rows.map((r, i) => `${i + 1}. ${r.username} — Lv${r.level || r.wins}${r.coins != null ? ` (${(r.coins + (r.bank_balance || 0)).toLocaleString()} wealth)` : ''}`).join('\n')
+      content: rows
+        .map((r, i) => {
+          if (r.wins != null) return `${i + 1}. ${r.username} — ${r.wins} wins`;
+          const battle = (r.strength || 0) + (r.defense || 0) + (r.speed || 0) + (r.dexterity || 0);
+          const statLine = r.strength != null ? ` [STR ${r.strength} DEF ${r.defense} SPD ${r.speed} DEX ${r.dexterity}]` : '';
+          return `${i + 1}. ${r.username} — Lv${r.level}${statLine}${r.coins != null ? ` (${(r.coins + (r.bank_balance || 0)).toLocaleString()}c)` : ''} (battle ${battle})`;
+        })
+        .join('\n')
     };
   }
   if (cmd === 'world') return reply(GameService.setWorld(uid, name, interaction.options.getString('id')), interaction);

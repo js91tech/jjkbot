@@ -24,8 +24,12 @@ test('full MVP loop', async () => {
   const b = 'user-b-test';
   GameService.profile(a, 'Yuji');
   GameService.profile(b, 'Megumi');
-  const train = GameService.train(a, 'Yuji', 2);
+  const train = GameService.train(a, 'Yuji', 2, 'strength');
   assert.equal(train.ok, true);
+  const trainDef = GameService.train(a, 'Yuji', 1, 'defense');
+  assert.equal(trainDef.ok, true);
+  const prof = GameService.profile(a, 'Yuji');
+  assert.ok(prof.player.defense >= 12);
   const crime = GameService.crime(a, 'Yuji', 'petty_cleanup');
   assert.equal(crime.ok, true);
   const wheel = GameService.wheel(a, 'Yuji');

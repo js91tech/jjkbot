@@ -5,7 +5,8 @@
   <div class="panel">
     <h3>Stats</h3>
     <p>Coins: <%= player.coins.toLocaleString() %> | Bank: <%= player.bank_balance.toLocaleString() %></p>
-    <p>CE: <%= player.ce %>/100 | Focus: <%= player.focus %> | Strength: <%= player.strength %></p>
+    <p>CE: <%= player.ce %>/100 | Focus: <%= player.focus %> | Resolve: <%= player.resolve %></p>
+    <p><strong>Combat</strong> — STR <%= player.strength %> | DEF <%= player.defense %> | SPD <%= player.speed %> | DEX <%= player.dexterity %></p>
     <p>Bravery: <%= player.bravery %> | Rice: <%= player.rice %> | Objects: <%= player.gold_objects %></p>
     <% if (status.hospital_until) { %><p>Infirmary until <%= status.hospital_until %></p><% } %>
     <% if (status.jail_until) { %><p>Prison Realm until <%= status.jail_until %></p><% } %>
@@ -14,6 +15,12 @@
   <div class="panel">
     <h3>Train</h3>
     <form method="post" action="/train">
+      <select name="stat">
+        <option value="strength">Strength</option>
+        <option value="defense">Defense</option>
+        <option value="speed">Speed</option>
+        <option value="dexterity">Dexterity</option>
+      </select>
       <input type="number" name="sets" value="1" min="1" max="20" />
       <button type="submit">Train</button>
     </form>

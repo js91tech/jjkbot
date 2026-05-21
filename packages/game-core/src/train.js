@@ -8,8 +8,16 @@ import {
   isBlocked,
   roll
 } from './util.js';
+import { normalizeTrainStat, TRAIN_STAT_LABELS } from './stats.js';
 
-export function train(discordId, username, sets = 1) {
+const GAIN_KEYS = {
+  strength: 'trainStrengthGain',
+  defense: 'trainDefenseGain',
+  speed: 'trainSpeedGain',
+  dexterity: 'trainDexterityGain'
+};
+
+export function train(discordId, username, sets = 1, stat = 'strength') {
   const player = getOrCreatePlayer(discordId, username);
   const block = isBlocked(player);
   if (block.blocked && block.reason === 'jail') {
@@ -20,7 +28,10 @@ export function train(discordId, username, sets = 1) {
   }
   const db = getDb();
   sets = Math.max(1, Math.min(20, sets));
-  let totalStr = 0;
+  const trainStat = normalizeTrainStat(stat);
+  const label = TRAIN_STAT_LABELS[trainStat];
+  const baseGain = balance[GAIN_KEYS[trainStat]] ?? balance.trainStrengthGain;
+  let totalGain = 0;
   let totalXp = 0;
   let crits = 0;
   const mult = getTrainMultiplier(player, db);
@@ -30,28 +41,24 @@ export function train(discordId, username, sets = 1) {
     if (ce < balance.trainCeCost || focus < balance.trainFocusCost) break;
     ce -= balance.trainCeCost;
     focus -= balance.trainFocusCost;
-    let gain = Math.floor(balance.trainStrengthGain * mult);
+    let gain = Math.floor(baseGain * mult);
     if (roll(0.08)) {
       gain = Math.floor(gain * 1.5);
       crits++;
     }
-    totalStr += gain;
+    totalGain += gain;
     totalXp += balance.trainXpGain;
   }
-  if (totalStr === 0) {
+  if (totalGain === 0) {
     return { ok: false, message: 'Not enough CE or Focus. Rest at the CE lounge or wait for regen.' };
   }
-  db.prepare('UPDATE players SET ce = ?, focus = ?, strength = strength + ?, xp = xp + ? WHERE id = ?').run(
-    ce,
-    focus,
-    totalStr,
-    totalXp,
-    player.id
-  );
-  audit(db, player.id, 'train', totalStr, { sets, crits });
+  db.prepare(
+    `UPDATE players SET ce = ?, focus = ?, ${trainStat} = ${trainStat} + ?, xp = xp + ? WHERE id = ?`
+  ).run(ce, focus, totalGain, totalXp, player.id);
+  audit(db, player.id, 'train', totalGain, { sets, crits, stat: trainStat });
   applyLevelUps(db, { ...player, xp: player.xp + totalXp });
   const updated = getOrCreatePlayer(discordId, username);
-  let msg = `Training complete! +${totalStr} Strength, +${totalXp} XP.`;
+  let msg = `Training complete! +${totalGain} ${label}, +${totalXp} XP.`;
   if (crits) msg += ` Black Flash procs: ${crits}!`;
   return { ok: true, message: msg, player: updated };
 }

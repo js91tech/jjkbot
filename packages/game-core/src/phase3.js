@@ -95,6 +95,10 @@ export function leaderboard(kind = 'level', limit = 10) {
     level: 'level DESC, xp DESC',
     wealth: '(coins + bank_balance) DESC',
     strength: 'strength DESC',
+    defense: 'defense DESC',
+    speed: 'speed DESC',
+    dexterity: 'dexterity DESC',
+    battle: '(strength + defense + speed + dexterity) DESC',
     pvp: null
   };
   if (kind === 'pvp') {
@@ -109,7 +113,10 @@ export function leaderboard(kind = 'level', limit = 10) {
   }
   const order = cols[kind] || cols.level;
   return db
-    .prepare(`SELECT username, level, coins, bank_balance, strength, world_id FROM players WHERE banned = 0 ORDER BY ${order} LIMIT ?`)
+    .prepare(
+      `SELECT username, level, coins, bank_balance, strength, defense, speed, dexterity, world_id
+       FROM players WHERE banned = 0 ORDER BY ${order} LIMIT ?`
+    )
     .all(limit);
 }
 

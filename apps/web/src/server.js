@@ -115,7 +115,12 @@ app.get('/dashboard', requireAuth, (req, res) => {
 });
 
 app.post('/train', requireAuth, (req, res) => {
-  const r = GameService.train(req.session.discordId, req.session.username, Number(req.body.sets) || 1);
+  const r = GameService.train(
+    req.session.discordId,
+    req.session.username,
+    Number(req.body.sets) || 1,
+    req.body.stat || 'strength'
+  );
   res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
 });
 

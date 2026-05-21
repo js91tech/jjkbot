@@ -100,8 +100,10 @@ export function applyLevelUps(db, player) {
   if (leveled > 0) {
     const maxHp = 100 + (level - 1) * 5;
     db.prepare(
-      `UPDATE players SET level = ?, xp = ?, max_hp = ?, hp = MIN(hp + ?, max_hp), strength = strength + ? WHERE id = ?`
-    ).run(level, xp, maxHp, leveled * 10, leveled, player.id);
+      `UPDATE players SET level = ?, xp = ?, max_hp = ?, hp = MIN(hp + ?, max_hp),
+       strength = strength + ?, defense = defense + ?, speed = speed + ?, dexterity = dexterity + ?
+       WHERE id = ?`
+    ).run(level, xp, maxHp, leveled * 10, leveled, leveled, leveled, leveled, player.id);
     audit(db, player.id, 'level_up', leveled, { newLevel: level });
   } else if (xp !== player.xp) {
     db.prepare('UPDATE players SET xp = ? WHERE id = ?').run(xp, player.id);

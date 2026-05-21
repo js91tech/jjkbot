@@ -6,7 +6,19 @@ export function buildSlashCommands() {
     new SlashCommandBuilder().setName('status').setDescription('CE, timers, blockers'),
     new SlashCommandBuilder()
       .setName('train')
-      .setDescription('Train at the grounds')
+      .setDescription('Train at the grounds (SoL-style stats)')
+      .addStringOption((o) =>
+        o
+          .setName('stat')
+          .setDescription('Stat to train')
+          .setRequired(true)
+          .addChoices(
+            { name: 'Strength', value: 'strength' },
+            { name: 'Defense', value: 'defense' },
+            { name: 'Speed', value: 'speed' },
+            { name: 'Dexterity', value: 'dexterity' }
+          )
+      )
       .addIntegerOption((o) => o.setName('sets').setDescription('Sets 1-20').setMinValue(1).setMaxValue(20)),
     new SlashCommandBuilder()
       .setName('crime')
@@ -194,7 +206,11 @@ export function buildSlashCommands() {
           .addChoices(
             { name: 'level', value: 'level' },
             { name: 'wealth', value: 'wealth' },
+            { name: 'battle', value: 'battle' },
             { name: 'strength', value: 'strength' },
+            { name: 'defense', value: 'defense' },
+            { name: 'speed', value: 'speed' },
+            { name: 'dexterity', value: 'dexterity' },
             { name: 'pvp', value: 'pvp' }
           )
       ),

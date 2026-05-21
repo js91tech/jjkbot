@@ -38,6 +38,20 @@ function migrate(db) {
     seedWorld(db);
     db.pragma('user_version = 1');
   }
+  if (version < 2) {
+    for (const [col, def] of [
+      ['defense', 'INTEGER NOT NULL DEFAULT 10'],
+      ['speed', 'INTEGER NOT NULL DEFAULT 10'],
+      ['dexterity', 'INTEGER NOT NULL DEFAULT 10']
+    ]) {
+      try {
+        db.exec(`ALTER TABLE players ADD COLUMN ${col} ${def}`);
+      } catch (e) {
+        if (!String(e.message).includes('duplicate column')) throw e;
+      }
+    }
+    db.pragma('user_version = 2');
+  }
 }
 
 function seedWorld(db) {

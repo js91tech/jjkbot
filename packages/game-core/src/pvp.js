@@ -9,10 +9,7 @@ import {
   minutesFromNow,
   roll
 } from './util.js';
-
-function combatPower(p) {
-  return p.strength * 2 + p.level * 5 + p.hp;
-}
+import { getCombatPower, getEffectiveStats } from './stats.js';
 
 function spendCe(db, player, percent) {
   const cost = Math.ceil((balance.ceMax * percent) / 100);
@@ -39,14 +36,18 @@ export function attack(discordId, username, targetDiscordId) {
   const db = getDb();
   const ceCost = spendCe(db, attacker, balance.attackCeCostPercent);
   if (ceCost === null) return { ok: false, message: 'Not enough CE for a duel (33%).' };
-  const aPow = combatPower(attacker);
-  const dPow = combatPower(defender);
-  const aRoll = aPow * (0.85 + Math.random() * 0.3);
-  const dRoll = dPow * (0.85 + Math.random() * 0.3);
+  const aPow = getCombatPower(attacker, db);
+  const dPow = getCombatPower(defender, db);
+  const aStats = getEffectiveStats(attacker, db);
+  const dStats = getEffectiveStats(defender, db);
+  const speedEdge = (aStats.speed - dStats.speed) * 0.02;
+  const aRoll = aPow * (0.85 + Math.random() * 0.3 + speedEdge);
+  const dRoll = dPow * (0.85 + Math.random() * 0.3 - speedEdge * 0.5);
   let message;
   let xpGain = 15;
   if (aRoll >= dRoll) {
-    const dmg = Math.floor(10 + attacker.strength * 0.5);
+    const rawDmg = Math.floor(10 + aStats.strength * 0.5);
+    const dmg = Math.max(1, rawDmg - Math.floor(dStats.defense * 0.25));
     const newHp = Math.max(0, defender.hp - dmg);
     db.prepare('UPDATE players SET hp = ? WHERE id = ?').run(newHp, defender.id);
     if (newHp <= 0 || roll(0.4)) {

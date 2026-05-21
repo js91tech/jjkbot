@@ -58,8 +58,8 @@ export class GameService {
     return getStatus(p);
   }
 
-  static train(discordId, username, sets) {
-    return train(discordId, username, sets);
+  static train(discordId, username, sets, stat = 'strength') {
+    return train(discordId, username, sets, stat);
   }
   static lounge(discordId, username, action) {
     return loungeAction(discordId, username, action);
