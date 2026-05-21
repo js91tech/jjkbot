@@ -241,7 +241,7 @@
       }
       const spec = FORM[path];
       if (!spec) return;
-      const panel = form.closest('.panel, .action-card, .action-tile, .shelf-panel, .lounge-panel, .escape-actions');
+      const panel = form.closest('.panel, .jjk-panel, .action-card, .action-tile, .shelf-panel, .lounge-panel, .escape-actions, .shop-card, .pvp-card');
       if (panel) {
         const h3 = panel.querySelector('h3');
         if (h3 && spec.panel) bind(h3, spec.panel);

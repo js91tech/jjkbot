@@ -1,5 +1,6 @@
-/* JJK Sorcerer MUD — skeuomorphic dashboard (mockup-inspired) */
+/* JJK Sorcerer MUD — skeuomorphic theme (dashboard + all pages) */
 
+body.page-jjk,
 body.page-dashboard {
   --dash-purple: #4c1d95;
   --dash-purple-glow: rgba(168, 85, 247, 0.55);
@@ -13,6 +14,7 @@ body.page-dashboard {
   background: #08060f;
 }
 
+body.page-jjk header,
 body.page-dashboard header {
   max-width: 1280px;
   border-bottom: 2px solid rgba(124, 58, 237, 0.4);
@@ -20,6 +22,7 @@ body.page-dashboard header {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
+body.page-jjk header strong,
 body.page-dashboard header strong {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 2rem;
@@ -32,22 +35,26 @@ body.page-dashboard header strong {
   text-transform: uppercase;
 }
 
+body.page-jjk nav a,
 body.page-dashboard nav a {
   font-size: 0.82rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
+body.page-jjk main,
 body.page-dashboard main {
   max-width: 1280px;
   padding: 0.75rem 1rem 2.5rem;
 }
 
+.jjk-page,
 .dash-page {
   position: relative;
   isolation: isolate;
 }
 
+.jjk-bg,
 .dash-bg {
   position: fixed;
   inset: 0;
@@ -58,6 +65,7 @@ body.page-dashboard main {
   filter: brightness(0.55) saturate(1.15);
 }
 
+.jjk-vignette,
 .dash-vignette {
   position: fixed;
   inset: 0;
@@ -451,6 +459,13 @@ a.btn-wood {
   box-shadow: 0 3px 0 #1f2937;
 }
 
+body.page-jjk .action-tile input,
+body.page-jjk .action-tile select,
+body.page-jjk .shelf-panel input,
+body.page-jjk .shelf-panel select,
+body.page-jjk .lounge-panel input,
+body.page-jjk .jjk-panel input,
+body.page-jjk .jjk-panel select,
 body.page-dashboard .action-tile input,
 body.page-dashboard .action-tile select,
 body.page-dashboard .shelf-panel input,
@@ -709,9 +724,266 @@ body.page-dashboard .lounge-panel input {
   font-family: 'Bebas Neue', sans-serif;
 }
 
+body.page-jjk .flash-wrap,
 body.page-dashboard .flash-wrap {
   border: 2px solid rgba(34, 211, 238, 0.4);
   background: rgba(15, 12, 28, 0.9);
+}
+
+/* ——— Subpages (shop, pvp, explore, advanced, leaderboard, home) ——— */
+
+body.page-jjk .page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.25rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.35rem;
+  color: #f8fafc;
+  text-shadow: 0 2px 12px rgba(124, 58, 237, 0.5);
+}
+
+body.page-jjk .page-lead {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+body.page-jjk .page-lead code {
+  color: #22d3ee;
+  font-size: 0.82rem;
+}
+
+body.page-jjk .jjk-back {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #c084fc;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+body.page-jjk .jjk-back:hover {
+  color: #22d3ee;
+}
+
+body.page-jjk .jjk-panel,
+body.page-jjk .panel {
+  background: linear-gradient(165deg, rgba(58, 54, 72, 0.95) 0%, rgba(30, 28, 40, 0.98) 100%);
+  border: 3px solid #4a4560;
+  border-radius: 3px;
+  padding: 1.1rem 1.25rem;
+  margin: 0 0 1rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+body.page-jjk .jjk-panel h3,
+body.page-jjk .panel h3 {
+  margin: 0 0 0.65rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  color: #e9d5ff;
+}
+
+body.page-jjk .jjk-panel.wood-panel {
+  background: linear-gradient(180deg, #4a3828 0%, #2d2218 100%);
+  border: 4px solid #5c4033;
+}
+
+body.page-jjk .jjk-panel.vine-panel {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(145deg, rgba(30, 22, 48, 0.92), rgba(18, 14, 32, 0.95)) padding-box,
+    linear-gradient(135deg, #7c3aed, #22d3ee, #5b21b6, #a855f7) border-box;
+}
+
+body.page-jjk .jjk-panel.stone-frame {
+  background: linear-gradient(165deg, rgba(58, 54, 72, 0.95) 0%, rgba(30, 28, 40, 0.98) 100%);
+  border: 3px solid #4a4560;
+}
+
+body.page-jjk .jjk-grid,
+body.page-jjk .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+body.page-jjk .flash {
+  border: 2px solid rgba(34, 211, 238, 0.35);
+  background: rgba(15, 12, 28, 0.92);
+  color: #f1f5f9;
+  padding: 0.85rem 1rem;
+  border-radius: 3px;
+  margin-bottom: 1rem;
+}
+
+body.page-jjk .explore-box {
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #4a4560;
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  color: #cbd5e1;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.5);
+}
+
+body.page-jjk .tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+body.page-jjk .tab-bar a {
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(124, 58, 237, 0.45);
+  border-radius: 2px;
+  color: #c4b5fd;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+body.page-jjk .tab-bar a:hover {
+  border-color: #22d3ee;
+  color: #67e8f9;
+}
+
+body.page-jjk .rank-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.page-jjk .rank-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 0.4rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+}
+
+body.page-jjk .rank-list .rank-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  color: #a855f7;
+  min-width: 1.5rem;
+}
+
+body.page-jjk .shop-card strong {
+  color: #f8fafc;
+  font-size: 1.05rem;
+}
+
+body.page-jjk .shop-card .price {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+body.page-jjk .pvp-card .target-name {
+  font-size: 1.1rem;
+  color: #f8fafc;
+}
+
+body.page-jjk .pvp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+body.page-jjk .list-plain {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.page-jjk .list-plain li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+  color: #cbd5e1;
+}
+
+body.page-jjk .home-hero {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+body.page-jjk .home-hero .vine-panel {
+  margin-bottom: 1.5rem;
+  padding: 2rem 1.5rem;
+}
+
+body.page-jjk .home-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  margin: 0;
+  background: linear-gradient(180deg, #fca5a5, #c084fc, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.page-jjk button:not(.btn-wood):not(.btn-stone):not(.secondary):not(.danger):not(.wheel-btn):not(.lounge-btn),
+body.page-jjk .btn:not(.btn-wood):not(.secondary) {
+  background: linear-gradient(180deg, #a855f7 0%, #6d28d9 50%, #5b21b6 100%);
+  border: 2px solid #c084fc;
+  border-radius: 3px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #3b0764;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+body.page-jjk button.secondary,
+body.page-jjk .btn.secondary {
+  background: linear-gradient(180deg, #78716c, #44403c);
+  border: 2px solid #a8a29e;
+  box-shadow: 0 4px 0 #292524;
+  color: #fafaf9;
+}
+
+body.page-jjk button.danger {
+  background: linear-gradient(180deg, #ef4444, #991b1b);
+  border: 2px solid #fca5a5;
+  box-shadow: 0 4px 0 #7f1d1d;
+}
+
+body.page-jjk input,
+body.page-jjk select {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  color: #f1f5f9;
+  padding: 0.45rem 0.55rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+}
+
+body.page-jjk .action-card form,
+body.page-jjk .jjk-panel form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 1024px) {

@@ -1,9 +1,14 @@
-<%- include('partials/head', { loggedIn: true, title: 'Explore' }) %>
+<%- include('partials/head', { loggedIn: true, title: 'Explore', pageClass: 'page-jjk' }) %>
+<%- include('partials/jjk-shell-open') %>
+
 <% if (flash) { %><div class="flash"><%= flash %></div><% } %>
-<h1>Explore</h1>
+<h1 class="page-title">Explore</h1>
+<p class="page-lead">Navigate Tokyo High, colonies, and hidden rooms.</p>
+
 <pre class="explore-box"><%= exploreText %></pre>
-<div class="grid">
-  <div class="panel">
+
+<div class="jjk-grid">
+  <article class="jjk-panel stone-frame">
     <h3>Move</h3>
     <form method="post" action="/explore">
       <input type="hidden" name="action" value="move" />
@@ -14,10 +19,10 @@
         <option value="west">West</option>
         <option value="up">Up</option>
       </select>
-      <button type="submit">Go</button>
+      <button type="submit" class="btn-curse">Go</button>
     </form>
-  </div>
-  <div class="panel">
+  </article>
+  <article class="jjk-panel wood-panel">
     <h3>Travel</h3>
     <form method="post" action="/explore">
       <input type="hidden" name="action" value="travel" />
@@ -27,18 +32,21 @@
         <option value="jujutsu_high_kyoto">Kyoto</option>
         <option value="sakurajima_colony">Sakurajima</option>
       </select>
-      <button type="submit">Travel</button>
+      <button type="submit" class="btn-curse">Travel</button>
     </form>
-  </div>
-  <div class="panel">
+  </article>
+  <article class="jjk-panel vine-panel">
     <h3>Mine / Talk</h3>
-    <form method="post" action="/explore"><input type="hidden" name="action" value="mine" /><button>Mine room</button></form>
+    <form method="post" action="/explore"><input type="hidden" name="action" value="mine" /><button type="submit" class="btn-wood">Mine room</button></form>
     <form method="post" action="/explore" style="margin-top:8px">
       <input type="hidden" name="action" value="talk" />
       <select name="npc"><option value="gojo">Gojo</option><option value="yaga">Yaga</option><option value="nanami">Nanami</option><option value="maki">Maki</option></select>
-      <button>Talk</button>
+      <button type="submit" class="btn-curse">Talk</button>
     </form>
-  </div>
+  </article>
 </div>
-<p><a href="/dashboard">Dashboard</a></p>
+
+<a class="jjk-back" href="/dashboard">← Dashboard</a>
+
+<%- include('partials/jjk-shell-close') %>
 <%- include('partials/foot') %>

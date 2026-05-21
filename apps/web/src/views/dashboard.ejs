@@ -1,8 +1,7 @@
-<%- include('partials/head', { loggedIn: true, title: 'Dashboard', pageClass: 'page-dashboard' }) %>
+<%- include('partials/head', { loggedIn: true, title: 'Dashboard', pageClass: 'page-jjk page-dashboard' }) %>
+<%- include('partials/jjk-shell-open') %>
 
 <div class="dash-page">
-  <div class="dash-bg" aria-hidden="true"></div>
-  <div class="dash-vignette" aria-hidden="true"></div>
   <span class="dash-ornament dash-ornament--tl" aria-hidden="true"></span>
   <span class="dash-ornament dash-ornament--tr" aria-hidden="true"></span>
 
@@ -207,4 +206,5 @@
   </section>
 </div>
 
+<%- include('partials/jjk-shell-close') %>
 <%- include('partials/foot') %>
