@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { GameService } from '@jjk/game-core';
 import { handleCommand } from './commands.js';
+import { registerSlashCommands } from './register-slash.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env.DATABASE_PATH =
@@ -17,8 +18,16 @@ if (!process.env.DISCORD_TOKEN) {
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const stopTicks = GameService.startScheduler();
 
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(`JJK-Bot logged in as ${c.user.tag}`);
+  if (process.env.REGISTER_COMMANDS_ON_START !== 'false') {
+    try {
+      await registerSlashCommands();
+    } catch (err) {
+      console.error('Slash command registration failed:', err.message);
+      console.error('Set DISCORD_CLIENT_ID on the bot service and DISCORD_GUILD_ID for instant server commands.');
+    }
+  }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
