@@ -34,7 +34,10 @@
     <div class="profile-inner">
       <h1 class="profile-name"><%= player.username %> <span class="grade-tag"><%= player.grade %></span></h1>
       <p class="profile-meta">Level <%= player.level %> · <%= player.world_id %> · Gym: <%= player.gym_id %></p>
-      <p class="profile-sync">Bot &amp; web share one save — same <code>DATABASE_PATH</code> on Railway.</p>
+      <div class="profile-actions">
+        <a href="/play/2d" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Open top-down 2D mode (same character as bot and web). Start API + 2D client locally, or set GAME_2D_URL on Railway.">Play 2D mode</a>
+        <span class="profile-sync">Same save as bot · <code>DATABASE_PATH</code></span>
+      </div>
     </div>
   </section>
 

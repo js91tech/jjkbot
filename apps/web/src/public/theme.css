@@ -246,6 +246,39 @@ body.page-dashboard main {
   color: #94a3b8;
 }
 
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.btn-launch-2d {
+  display: inline-block;
+  padding: 0.6rem 1.35rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(180deg, #22d3ee 0%, #0891b2 45%, #0e7490 100%);
+  border: 2px solid #67e8f9;
+  border-radius: 4px;
+  box-shadow:
+    0 0 20px rgba(34, 211, 238, 0.45),
+    0 4px 0 #155e75;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-launch-2d:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 28px rgba(34, 211, 238, 0.6),
+    0 4px 0 #155e75;
+  color: #fff;
+}
+
 /* Resource stones */
 .resource-row {
   display: grid;

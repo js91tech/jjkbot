@@ -39,6 +39,12 @@ function getBaseUrl() {
 const baseUrl = getBaseUrl();
 const oauthRedirectUri = `${baseUrl}/oauth/callback`;
 
+/** Hosted Phaser client (jjk-game-2d). Default: local Vite dev server. */
+function getGame2dUrl() {
+  const raw = process.env.GAME_2D_URL || 'http://localhost:5173';
+  return raw.replace(/\/$/, '');
+}
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
@@ -136,8 +142,20 @@ app.get('/dashboard', requireAuth, (req, res) => {
     flashAction: action,
     flashGif: gifForAction(action, flashOk),
     flashOk,
-    heroImage: HERO_IMAGE
+    heroImage: HERO_IMAGE,
+    game2dUrl: getGame2dUrl()
   });
+});
+
+/** Launch 2D client as the logged-in Discord user (query params + API dev auth). */
+app.get('/play/2d', requireAuth, (req, res) => {
+  const base = getGame2dUrl();
+  const params = new URLSearchParams({
+    discord_id: req.session.discordId,
+    username: req.session.username || 'Sorcerer'
+  });
+  const joiner = base.includes('?') ? '&' : '?';
+  res.redirect(`${base}${joiner}${params.toString()}`);
 });
 
 app.post('/train', requireAuth, (req, res) => {
