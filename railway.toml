@@ -2,7 +2,7 @@
 # Deploy → clear "Custom Start Command" in UI if deploy still fails (let this file control it).
 
 [deploy]
-startCommand = "npm run start -w @jjk/web"
+startCommand = "npm run start -w @jjk/discord-bot"
 healthcheckPath = "/health"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
