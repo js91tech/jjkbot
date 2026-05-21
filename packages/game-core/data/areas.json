@@ -1,0 +1,354 @@
+{
+  "tokyo_jujutsu_high": {
+    "name": "Tokyo Jujutsu High",
+    "description": "The prestigious school for jujutsu sorcerers, hidden within Tokyo.",
+    "emoji": "🏫",
+    "min_level": 1,
+    "rooms": {
+      "courtyard": {
+        "name": "Main Courtyard",
+        "description": "An open training area surrounded by ancient buildings. Satoru Gojo often lounges here.",
+        "exits": {
+          "north": "main_hall",
+          "east": "training_grounds",
+          "west": "dormitory",
+          "south": "gate"
+        },
+        "npcs": ["gojo"],
+        "mineable": false,
+        "enemies": "weak",
+        "emoji": "🏛️"
+      },
+      "main_hall": {
+        "name": "Main Hall",
+        "description": "The central building where briefings and announcements take place. Principal Yaga's office is upstairs.",
+        "exits": {
+          "south": "courtyard",
+          "east": "cafeteria",
+          "up": "principals_office"
+        },
+        "npcs": ["yaga"],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "🏛️"
+      },
+      "training_grounds": {
+        "name": "Training Grounds",
+        "description": "A massive outdoor area with cursed barriers for combat practice. Cursed energy lingers in the air.",
+        "exits": {
+          "west": "courtyard",
+          "north": "cursed_pit"
+        },
+        "npcs": ["nanami"],
+        "mineable": false,
+        "enemies": "weak",
+        "emoji": "⚔️"
+      },
+      "cursed_pit": {
+        "name": "Cursed Pit",
+        "description": "An underground arena where captured curses are held for training exercises. Rich with residual cursed energy.",
+        "exits": {
+          "south": "training_grounds"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["cursed_residue", "spirit_fragment", "bone_shard"],
+        "enemies": "medium",
+        "emoji": "🕳️"
+      },
+      "dormitory": {
+        "name": "Student Dormitory",
+        "description": "Living quarters for students. Each room has personal cursed barriers for privacy.",
+        "exits": {
+          "east": "courtyard"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "🏚️"
+      },
+      "cafeteria": {
+        "name": "Cafeteria",
+        "description": "Serves food infused with mild cursed energy to help sorcerers recover. Gojo's favorite spot.",
+        "exits": {
+          "west": "main_hall"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "🍱"
+      },
+      "gate": {
+        "name": "Front Gate",
+        "description": "The barrier-protected entrance to Tokyo Jujutsu High. From here, the city awaits.",
+        "exits": {
+          "north": "courtyard",
+          "south": "shibuya_district:shibuya_intersection"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": "weak",
+        "emoji": "⛩️"
+      },
+      "principals_office": {
+        "name": "Principal's Office",
+        "description": "Masamichi Yaga's office, cluttered with cursed corpse parts and documents. Serious business only.",
+        "exits": {
+          "down": "main_hall"
+        },
+        "npcs": ["yaga"],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "📋"
+      }
+    }
+  },
+  "shibuya_district": {
+    "name": "Shibuya District",
+    "description": "A bustling ward in Tokyo, teeming with civilians and hidden curses.",
+    "emoji": "🌃",
+    "min_level": 3,
+    "rooms": {
+      "shibuya_intersection": {
+        "name": "Shibuya Crossing",
+        "description": "The famous scramble crossing. Beneath the crowds, a massive curtain of cursed energy pulses.",
+        "exits": {
+          "north": "tokyo_jujutsu_high:gate",
+          "east": "shibuya_station",
+          "west": "nightclub_alley",
+          "south": "underground_mall"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": "medium",
+        "emoji": "🚶"
+      },
+      "shibuya_station": {
+        "name": "Shibuya Station",
+        "description": "The transit hub where the Shibuya Incident occurred. Residual cursed energy still lingers intensely.",
+        "exits": {
+          "west": "shibuya_intersection",
+          "down": "station_depths"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["cursed_residue", "spirit_fragment", "void_crystal"],
+        "enemies": "strong",
+        "emoji": "🚉"
+      },
+      "nightclub_alley": {
+        "name": "Nightclub Alley",
+        "description": "Dark alleyways filled with bars and clubs. Cursed spirits prey on the intoxicated.",
+        "exits": {
+          "east": "shibuya_intersection"
+        },
+        "npcs": ["geto_informant"],
+        "mineable": true,
+        "materials": ["cursed_residue", "blood_crystal"],
+        "enemies": "medium",
+        "emoji": "🍸"
+      },
+      "underground_mall": {
+        "name": "Underground Mall",
+        "description": "An abandoned shopping complex beneath Shibuya. Curses have claimed it as their territory.",
+        "exits": {
+          "north": "shibuya_intersection",
+          "east": "veil_chamber"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["bone_shard", "spirit_fragment", "shadow_essence"],
+        "enemies": "medium",
+        "emoji": "🛍️"
+      },
+      "station_depths": {
+        "name": "Station Depths",
+        "description": "Deep beneath the station, sealed tunnels radiate cursed energy. Only the brave venture here.",
+        "exits": {
+          "up": "shibuya_station"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["void_crystal", "spirit_fragment", "ancient_relic_shard"],
+        "enemies": "strong",
+        "emoji": "🕳️"
+      },
+      "veil_chamber": {
+        "name": "Veil Chamber",
+        "description": "A sealed room protected by a powerful veil. Powerful curses and rare materials await.",
+        "exits": {
+          "west": "underground_mall"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["void_crystal", "ancient_relic_shard", "domain_core"],
+        "enemies": "boss",
+        "emoji": "🔮"
+      }
+    }
+  },
+  "sakurajima_colony": {
+    "name": "Sakurajima Colony",
+    "description": "An isolated island colony governed by its own rules, where sorcerers battle for supremacy.",
+    "emoji": "🌸",
+    "min_level": 10,
+    "rooms": {
+      "colony_dock": {
+        "name": "Colony Dock",
+        "description": "The arrival point for the colony. A barrier separates it from the outside world.",
+        "exits": {
+          "north": "colony_village",
+          "east": "cliffside_mines"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["cursed_residue", "bone_shard"],
+        "enemies": "medium",
+        "emoji": "⚓"
+      },
+      "colony_village": {
+        "name": "Colony Village",
+        "description": "A small settlement of civilians and weaker sorcerers. Trade happens here.",
+        "exits": {
+          "south": "colony_dock",
+          "north": "ancient_shrine",
+          "west": "forest_path"
+        },
+        "npcs": ["colony_merchant"],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "🏘️"
+      },
+      "cliffside_mines": {
+        "name": "Cliffside Mines",
+        "description": "Mineral-rich caves carved into the island cliffs. Cursed ores vein the walls.",
+        "exits": {
+          "west": "colony_dock",
+          "down": "deep_shaft"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["cursed_ore", "spirit_fragment", "rare_gem"],
+        "enemies": "strong",
+        "emoji": "⛏️"
+      },
+      "deep_shaft": {
+        "name": "Deep Shaft",
+        "description": "The lowest level of the mines. Immense pressure and cursed energy create rare materials.",
+        "exits": {
+          "up": "cliffside_mines"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["rare_gem", "ancient_relic_shard", "domain_core"],
+        "enemies": "boss",
+        "emoji": "⛏️"
+      },
+      "ancient_shrine": {
+        "name": "Ancient Shrine",
+        "description": "A sacred site dating back centuries. The cursed energy here is old and powerful.",
+        "exits": {
+          "south": "colony_village"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["ancient_relic_shard", "domain_core", "void_crystal"],
+        "enemies": "strong",
+        "emoji": "⛩️"
+      },
+      "forest_path": {
+        "name": "Forest Path",
+        "description": "A winding path through cursed woods. Shadows move between the trees.",
+        "exits": {
+          "east": "colony_village",
+          "north": "hidden_clearing"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["shadow_essence", "bone_shard", "spirit_fragment"],
+        "enemies": "medium",
+        "emoji": "🌲"
+      },
+      "hidden_clearing": {
+        "name": "Hidden Clearing",
+        "description": "A secret grove where cursed energy pools into liquid form. Extremely valuable materials.",
+        "exits": {
+          "south": "forest_path"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["cursed_ore", "domain_core", "rare_gem", "shadow_essence"],
+        "enemies": "boss",
+        "emoji": "🌙"
+      }
+    }
+  },
+  "jujutsu_high_kyoto": {
+    "name": "Kyoto Jujutsu High",
+    "description": "The rival branch of Jujutsu High, known for its traditional and militant approach.",
+    "emoji": "⛩️",
+    "min_level": 5,
+    "rooms": {
+      "kyoto_gate": {
+        "name": "Kyoto Gate",
+        "description": "The imposing entrance to Kyoto Jujutsu High. More militaristic than Tokyo's.",
+        "exits": {
+          "north": "kyoto_courtyard"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": null,
+        "emoji": "⛩️"
+      },
+      "kyoto_courtyard": {
+        "name": "Kyoto Courtyard",
+        "description": "A disciplined training space. Kyoto students practice here constantly.",
+        "exits": {
+          "south": "kyoto_gate",
+          "east": "kyoto_arena",
+          "west": "kyoto_library"
+        },
+        "npcs": ["gakuganji"],
+        "mineable": false,
+        "enemies": "medium",
+        "emoji": "🏫"
+      },
+      "kyoto_arena": {
+        "name": "Kyoto Grand Arena",
+        "description": "A massive arena for the Kyoto Sister-School Goodwill Event. Intense battles happen here.",
+        "exits": {
+          "west": "kyoto_courtyard"
+        },
+        "npcs": [],
+        "mineable": false,
+        "enemies": "strong",
+        "emoji": "🏟️"
+      },
+      "kyoto_library": {
+        "name": "Cursed Archives",
+        "description": "Vast records of jujutsu history and techniques. Some scrolls hold forbidden knowledge.",
+        "exits": {
+          "east": "kyoto_courtyard",
+          "down": "sealed_vault"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["ancient_relic_shard", "spirit_fragment", "void_crystal"],
+        "enemies": "medium",
+        "emoji": "📚"
+      },
+      "sealed_vault": {
+        "name": "Sealed Vault",
+        "description": "A heavily protected underground vault containing dangerous cursed objects.",
+        "exits": {
+          "up": "kyoto_library"
+        },
+        "npcs": [],
+        "mineable": true,
+        "materials": ["domain_core", "ancient_relic_shard", "void_crystal"],
+        "enemies": "boss",
+        "emoji": "🔒"
+      }
+    }
+  }
+}

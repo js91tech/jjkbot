@@ -3,6 +3,7 @@ import balance from './balance.json' with { type: 'json' };
 import { getOrCreatePlayer, getInventory, addItem, removeItem } from './player.js';
 import { applyLevelUps, audit, isBlocked } from './util.js';
 import { openGrabBag } from './phase3.js';
+import { companyWork } from './company.js';
 
 export function bank(discordId, username, action, amount) {
   const player = getOrCreatePlayer(discordId, username);
@@ -101,6 +102,7 @@ export function shopBuy(discordId, username, itemId, quantity = 1) {
 
 export function work(discordId, username) {
   const player = getOrCreatePlayer(discordId, username);
+  if (player.company_id) return companyWork(discordId, username);
   const block = isBlocked(player);
   if (block.blocked) return { ok: false, message: 'Cannot work while hospitalized or jailed.' };
   const db = getDb();

@@ -1,0 +1,44 @@
+<%- include('partials/head', { loggedIn: true, title: 'Explore' }) %>
+<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+<h1>Explore</h1>
+<pre class="explore-box"><%= exploreText %></pre>
+<div class="grid">
+  <div class="panel">
+    <h3>Move</h3>
+    <form method="post" action="/explore">
+      <input type="hidden" name="action" value="move" />
+      <select name="direction">
+        <option value="north">North</option>
+        <option value="south">South</option>
+        <option value="east">East</option>
+        <option value="west">West</option>
+        <option value="up">Up</option>
+      </select>
+      <button type="submit">Go</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Travel</h3>
+    <form method="post" action="/explore">
+      <input type="hidden" name="action" value="travel" />
+      <select name="area">
+        <option value="tokyo_jujutsu_high">Tokyo Jujutsu High</option>
+        <option value="shibuya_district">Shibuya</option>
+        <option value="jujutsu_high_kyoto">Kyoto</option>
+        <option value="sakurajima_colony">Sakurajima</option>
+      </select>
+      <button type="submit">Travel</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Mine / Talk</h3>
+    <form method="post" action="/explore"><input type="hidden" name="action" value="mine" /><button>Mine room</button></form>
+    <form method="post" action="/explore" style="margin-top:8px">
+      <input type="hidden" name="action" value="talk" />
+      <select name="npc"><option value="gojo">Gojo</option><option value="yaga">Yaga</option><option value="nanami">Nanami</option><option value="maki">Maki</option></select>
+      <button>Talk</button>
+    </form>
+  </div>
+</div>
+<p><a href="/dashboard">Dashboard</a></p>
+<%- include('partials/foot') %>

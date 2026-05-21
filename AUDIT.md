@@ -28,6 +28,7 @@ SoL-style systems implemented in `game-core`:
 - **MVP:** CE regen, gym, missions, PvP (attack/mug/rob), hospital/jail, shop, bank, jobs, wheel, lounge, daily login
 - **Phase 2:** education, clans, estates, item/gold markets, forge, commodities
 - **Phase 3:** delve (mining), grab bags, leaderboards, worlds, admin
+- **Phase 4 (SoL parity):** worker stats, gyms, equip slots, companies, drugs, explore/NPCs from `data/areas.json`, forge recipes
 
 ## Merging old Python progress
 

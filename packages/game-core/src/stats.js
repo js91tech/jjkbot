@@ -19,7 +19,7 @@ export function getGearStatBonuses(player, db) {
     .prepare(
       `SELECT i.effects_json FROM inventory_items inv
        JOIN item_definitions i ON i.id = inv.item_id
-       WHERE inv.player_id = ? AND inv.equipped = 1`
+       WHERE inv.player_id = ? AND inv.equip_slot IS NOT NULL`
     )
     .all(player.id);
   for (const g of gear) {
@@ -44,7 +44,7 @@ export function getEffectiveStats(player, db) {
   const bonuses = getGearStatBonuses(player, db);
   const stats = {};
   for (const stat of TRAIN_STATS) {
-    stats[stat] = player[stat] + (bonuses[stat] || 0);
+    stats[stat] = (player[stat] ?? 10) + (bonuses[stat] || 0);
   }
   stats.total = stats.strength + stats.defense + stats.speed + stats.dexterity;
   return stats;

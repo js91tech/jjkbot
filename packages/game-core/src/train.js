@@ -4,6 +4,7 @@ import { getOrCreatePlayer } from './player.js';
 import {
   applyLevelUps,
   audit,
+  getCritChance,
   getTrainMultiplier,
   isBlocked,
   roll
@@ -42,7 +43,7 @@ export function train(discordId, username, sets = 1, stat = 'strength') {
     ce -= balance.trainCeCost;
     focus -= balance.trainFocusCost;
     let gain = Math.floor(baseGain * mult);
-    if (roll(0.08)) {
+    if (roll(getCritChance(player, db))) {
       gain = Math.floor(gain * 1.5);
       crits++;
     }

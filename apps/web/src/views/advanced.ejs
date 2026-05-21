@@ -18,9 +18,15 @@
     <form method="post" action="/advanced"><input type="hidden" name="type" value="enroll" /><input name="courseId" /><button>Enroll</button></form>
   </div>
   <div class="panel">
+    <h3>Company / Drugs</h3>
+    <form method="post" action="/advanced"><input type="hidden" name="type" value="joinCompany" /><input name="companyId" placeholder="jujutsu_ops" /><button>Join Company</button></form>
+    <form method="post" action="/drug" style="margin-top:6px"><input name="drugId" value="ce_shot" /><button>CE Shot</button></form>
+  </div>
+  <div class="panel">
     <h3>Forge / Delve / Grab bag</h3>
-    <form method="post" action="/advanced"><input type="hidden" name="type" value="forge" /><button>Forge</button></form>
+    <form method="post" action="/advanced"><input type="hidden" name="type" value="forge" /><input name="recipeId" placeholder="cursed_blade" /><button>Forge</button></form>
     <form method="post" action="/advanced"><input type="hidden" name="type" value="delve" /><button>Delve</button></form>
+    <form method="post" action="/advanced"><input type="hidden" name="type" value="endDelve" /><button>End Delve</button></form>
     <form method="post" action="/advanced"><input type="hidden" name="type" value="grabbag" /><button>Open Capsule</button></form>
   </div>
   <div class="panel">

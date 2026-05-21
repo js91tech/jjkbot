@@ -199,11 +199,50 @@ app.post('/advanced', requireAuth, (req, res) => {
   if (type === 'joinClan') r = GameService.joinClan(id, name, req.body.clanId);
   if (type === 'buyEstate') r = GameService.buyEstate(id, name, Number(req.body.tier));
   if (type === 'enroll') r = GameService.educationEnroll(id, name, req.body.courseId);
-  if (type === 'forge') r = GameService.forge(id, name);
+  if (type === 'joinCompany') r = GameService.joinCompany(id, name, req.body.companyId);
+  if (type === 'forge') r = GameService.forge(id, name, req.body.recipeId || 'cursed_blade');
   if (type === 'delve') r = GameService.delve(id, name);
+  if (type === 'endDelve') r = GameService.endDelve(id, name);
   if (type === 'grabbag') r = GameService.openGrabBag(id, name);
   if (type === 'commodity') r = GameService.commodityTrade(id, name, req.body.commId, Number(req.body.qty), req.body.action);
   res.redirect('/advanced?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/worker', requireAuth, (req, res) => {
+  const r = GameService.trainWorker(req.session.discordId, req.session.username, req.body.stat, Number(req.body.sets) || 1);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/gym', requireAuth, (req, res) => {
+  const r = GameService.setGym(req.session.discordId, req.session.username, req.body.gymId);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/equip', requireAuth, (req, res) => {
+  const r = GameService.equip(req.session.discordId, req.session.username, req.body.item);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.post('/drug', requireAuth, (req, res) => {
+  const r = GameService.useDrug(req.session.discordId, req.session.username, req.body.drugId);
+  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+});
+
+app.get('/explore', requireAuth, (req, res) => {
+  const r = GameService.explore(req.session.discordId, req.session.username);
+  res.render('explore', { exploreText: r.message, flash: req.query.msg });
+});
+
+app.post('/explore', requireAuth, (req, res) => {
+  const id = req.session.discordId;
+  const name = req.session.username;
+  let r;
+  if (req.body.action === 'move') r = GameService.exploreMove(id, name, req.body.direction);
+  else if (req.body.action === 'travel') r = GameService.exploreTravel(id, name, req.body.area);
+  else if (req.body.action === 'mine') r = GameService.exploreMine(id, name);
+  else if (req.body.action === 'talk') r = GameService.talkNpc(id, name, req.body.npc);
+  else r = GameService.explore(id, name);
+  res.redirect('/explore?msg=' + encodeURIComponent(r.message));
 });
 
 app.get('/leaderboard', (req, res) => {

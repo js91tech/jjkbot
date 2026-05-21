@@ -7,13 +7,33 @@
     <p>Coins: <%= player.coins.toLocaleString() %> | Bank: <%= player.bank_balance.toLocaleString() %></p>
     <p>CE: <%= player.ce %>/100 | Focus: <%= player.focus %> | Resolve: <%= player.resolve %></p>
     <p><strong>Combat</strong> — STR <%= player.strength %> | DEF <%= player.defense %> | SPD <%= player.speed %> | DEX <%= player.dexterity %></p>
+    <p><strong>Worker</strong> — LAB <%= player.manual_labor %> | INT <%= player.intelligence %> | END <%= player.endurance %> | TEC <%= player.technique %></p>
+    <p>Gym: <%= player.gym_id %> | Company: <%= player.company_id || 'none' %></p>
     <p>Bravery: <%= player.bravery %> | Rice: <%= player.rice %> | Objects: <%= player.gold_objects %></p>
     <% if (status.hospital_until) { %><p>Infirmary until <%= status.hospital_until %></p><% } %>
     <% if (status.jail_until) { %><p>Prison Realm until <%= status.jail_until %></p><% } %>
     <p class="stat">Wheel spins left: <%= status.wheel_spins_left %></p>
   </div>
   <div class="panel">
-    <h3>Train</h3>
+    <h3>Worker train</h3>
+    <form method="post" action="/worker">
+      <select name="stat">
+        <option value="manual_labor">Manual Labor</option>
+        <option value="intelligence">Intelligence</option>
+        <option value="endurance">Endurance</option>
+        <option value="technique">Technique</option>
+      </select>
+      <input type="number" name="sets" value="1" min="1" max="20" />
+      <button type="submit">Train</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Gym / Equip</h3>
+    <form method="post" action="/gym"><input type="hidden" name="gymId" value="cursed_pit" /><button>Set Cursed Pit</button></form>
+    <form method="post" action="/equip" style="margin-top:6px"><input name="item" placeholder="item id" /><button>Equip</button></form>
+  </div>
+  <div class="panel">
+    <h3>Train combat</h3>
     <form method="post" action="/train">
       <select name="stat">
         <option value="strength">Strength</option>

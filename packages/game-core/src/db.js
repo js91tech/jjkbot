@@ -52,6 +52,92 @@ function migrate(db) {
     }
     db.pragma('user_version = 2');
   }
+  if (version < 3) {
+    const cols = [
+      ['manual_labor', 'INTEGER NOT NULL DEFAULT 10'],
+      ['intelligence', 'INTEGER NOT NULL DEFAULT 10'],
+      ['endurance', 'INTEGER NOT NULL DEFAULT 10'],
+      ['technique', 'INTEGER NOT NULL DEFAULT 10'],
+      ['gym_id', "TEXT NOT NULL DEFAULT 'training_grounds'"],
+      ['company_id', 'TEXT'],
+      ['explore_area', "TEXT NOT NULL DEFAULT 'tokyo_jujutsu_high'"],
+      ['explore_room', "TEXT NOT NULL DEFAULT 'courtyard'"],
+      ['npc_progress_json', "TEXT NOT NULL DEFAULT '{}'"],
+      ['drug_cooldowns_json', "TEXT NOT NULL DEFAULT '{}'"]
+    ];
+    for (const [col, def] of cols) {
+      try {
+        db.exec(`ALTER TABLE players ADD COLUMN ${col} ${def}`);
+      } catch (e) {
+        if (!String(e.message).includes('duplicate column')) throw e;
+      }
+    }
+    try {
+      db.exec('ALTER TABLE inventory_items ADD COLUMN equip_slot TEXT');
+    } catch (e) {
+      if (!String(e.message).includes('duplicate column')) throw e;
+    }
+    seedPhase4(db);
+    db.pragma('user_version = 3');
+  }
+}
+
+function seedPhase4(db) {
+  const gyms = [
+    ['training_grounds', 'Training Grounds', 'Standard Jujutsu High gym', 1.0, 1, 0],
+    ['cursed_pit', 'Cursed Pit', 'High CE density training', 1.15, 5, 25000],
+    ['domain_chamber', 'Domain Chamber', 'Elite multiplier', 1.3, 20, 250000],
+    ['zenin_dojo', 'Zenin Dojo', 'Speed and dex focus', 1.2, 12, 100000]
+  ];
+  const insGym = db.prepare(
+    `INSERT OR IGNORE INTO gym_definitions (id, name, description, train_multiplier, min_level, unlock_cost) VALUES (?, ?, ?, ?, ?, ?)`
+  );
+  for (const r of gyms) insGym.run(...r);
+
+  const companies = [
+    ['jujutsu_ops', 'Jujutsu Ops Division', 'manual_labor', 300, 100, 1.25, 1],
+    ['cursed_logistics', 'Cursed Logistics', 'intelligence', 400, 120, 1.3, 5],
+    ['shibuya_response', 'Shibuya Response Unit', 'endurance', 500, 140, 1.35, 10],
+    ['vault_security', 'Vault Security Corp', 'technique', 600, 160, 1.4, 18]
+  ];
+  const insCo = db.prepare(
+    `INSERT OR IGNORE INTO company_definitions (id, name, worker_stat, base_coins, base_xp, payout_mult, min_level) VALUES (?, ?, ?, ?, ?, ?, ?)`
+  );
+  for (const r of companies) insCo.run(...r);
+
+  const drugs = [
+    ['ce_shot', 'CE Shot', 'Restore 40 CE', 500, 45, '{"ce":40}'],
+    ['focus_tea', 'Focus Tea', '+30 Focus', 350, 30, '{"focus":30}'],
+    ['resolve_pill', 'Resolve Pill', '+25 Resolve and Bravery', 400, 60, '{"resolve":25,"bravery":25}'],
+    ['booster_serum', 'Booster Serum', '+2 all combat stats', 2500, 180, '{"strength":2,"defense":2,"speed":2,"dexterity":2}']
+  ];
+  const insDrug = db.prepare(
+    `INSERT OR IGNORE INTO drug_definitions (id, name, description, cost, cooldown_minutes, effects_json) VALUES (?, ?, ?, ?, ?, ?)`
+  );
+  for (const r of drugs) insDrug.run(...r);
+
+  const recipes = [
+    ['cursed_blade', 'Cursed Blade', 'cursed_blade', '{"iron_ore":2,"spirit_core":1}', 10000, 50],
+    ['spirit_spear', 'Spirit Spear', 'spirit_spear', '{"iron_ore":5,"spirit_core":2}', 25000, 100],
+    ['armor_vest', 'Cursed Armor Vest', 'armor_vest', '{"iron_ore":4}', 8000, 40],
+    ['domain_charm', 'Domain Charm', 'domain_charm', '{"spirit_core":3,"grade_bead":1}', 100000, 200]
+  ];
+  const insRec = db.prepare(
+    `INSERT OR IGNORE INTO forge_recipes (id, name, output_item, materials_json, coin_cost, ce_cost) VALUES (?, ?, ?, ?, ?, ?)`
+  );
+  for (const r of recipes) insRec.run(...r);
+
+  const extraItems = [
+    ['spirit_spear', 'Spirit Spear', 'Piercing weapon', 0, 'weapon', '{"strength":5,"speed":2}'],
+    ['armor_vest', 'Cursed Armor Vest', 'Chest protection', 0, 'armor', '{"defense":4,"max_hp":15}'],
+    ['domain_charm', 'Domain Charm', 'Technique amplifier', 0, 'gear', '{"trainMult":1.08,"dexterity":2}'],
+    ['cursed_gloves', 'Cursed Gloves', 'Worker gear', 3500, 'gear', '{"manual_labor":3}'],
+    ['scholar_tome', 'Scholar Tome', 'Study aid', 4000, 'gear', '{"intelligence":3}']
+  ];
+  const insItem = db.prepare(
+    `INSERT OR IGNORE INTO item_definitions (id, name, description, shop_price, item_type, effects_json) VALUES (?, ?, ?, ?, ?, ?)`
+  );
+  for (const r of extraItems) insItem.run(...r);
 }
 
 function seedWorld(db) {

@@ -62,8 +62,25 @@ export function audit(db, playerId, kind, amount, meta = {}) {
   ).run(playerId, kind, amount, JSON.stringify(meta));
 }
 
+export function getCritChance(player, db) {
+  let chance = 0.08;
+  const edu = JSON.parse(player.education_json || '[]');
+  for (const courseId of edu) {
+    const c = db.prepare('SELECT bonus_json FROM education_courses WHERE id = ?').get(courseId);
+    if (c) {
+      const b = JSON.parse(c.bonus_json);
+      if (b.critBonus) chance += b.critBonus;
+    }
+  }
+  return chance;
+}
+
 export function getTrainMultiplier(player, db) {
   let mult = 1;
+  const gym = db.prepare('SELECT train_multiplier FROM gym_definitions WHERE id = ?').get(
+    player.gym_id || 'training_grounds'
+  );
+  if (gym) mult *= gym.train_multiplier;
   const estate = db.prepare('SELECT train_multiplier FROM estate_tiers WHERE tier = ?').get(player.estate_tier);
   if (estate) mult *= estate.train_multiplier;
   const edu = JSON.parse(player.education_json || '[]');
@@ -78,7 +95,7 @@ export function getTrainMultiplier(player, db) {
     .prepare(
       `SELECT i.effects_json FROM inventory_items inv
        JOIN item_definitions i ON i.id = inv.item_id
-       WHERE inv.player_id = ? AND inv.equipped = 1`
+       WHERE inv.player_id = ? AND inv.equip_slot IS NOT NULL`
     )
     .all(player.id);
   for (const g of gear) {

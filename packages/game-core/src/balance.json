@@ -14,6 +14,8 @@
   "trainSpeedGain": 2,
   "trainDexterityGain": 2,
   "trainXpGain": 3,
+  "workerTrainCeCost": 8,
+  "workerTrainGain": 2,
   "wheelDailySpins": 50,
   "workCooldownMinutes": 60,
   "hospitalMinutes": 15,

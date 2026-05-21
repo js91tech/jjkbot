@@ -17,6 +17,16 @@ CREATE TABLE IF NOT EXISTS players (
   defense INTEGER NOT NULL DEFAULT 10,
   speed INTEGER NOT NULL DEFAULT 10,
   dexterity INTEGER NOT NULL DEFAULT 10,
+  manual_labor INTEGER NOT NULL DEFAULT 10,
+  intelligence INTEGER NOT NULL DEFAULT 10,
+  endurance INTEGER NOT NULL DEFAULT 10,
+  technique INTEGER NOT NULL DEFAULT 10,
+  gym_id TEXT NOT NULL DEFAULT 'training_grounds',
+  company_id TEXT,
+  explore_area TEXT NOT NULL DEFAULT 'tokyo_jujutsu_high',
+  explore_room TEXT NOT NULL DEFAULT 'courtyard',
+  npc_progress_json TEXT NOT NULL DEFAULT '{}',
+  drug_cooldowns_json TEXT NOT NULL DEFAULT '{}',
   hp INTEGER NOT NULL DEFAULT 100,
   max_hp INTEGER NOT NULL DEFAULT 100,
   bravery INTEGER NOT NULL DEFAULT 100,
@@ -54,7 +64,45 @@ CREATE TABLE IF NOT EXISTS inventory_items (
   item_id TEXT NOT NULL REFERENCES item_definitions(id),
   quantity INTEGER NOT NULL DEFAULT 1,
   equipped INTEGER NOT NULL DEFAULT 0,
+  equip_slot TEXT,
   UNIQUE(player_id, item_id)
+);
+
+CREATE TABLE IF NOT EXISTS gym_definitions (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  train_multiplier REAL NOT NULL DEFAULT 1.0,
+  min_level INTEGER NOT NULL DEFAULT 1,
+  unlock_cost INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS company_definitions (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  worker_stat TEXT NOT NULL DEFAULT 'manual_labor',
+  base_coins INTEGER NOT NULL DEFAULT 200,
+  base_xp INTEGER NOT NULL DEFAULT 80,
+  payout_mult REAL NOT NULL DEFAULT 1.2,
+  min_level INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS drug_definitions (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  cost INTEGER NOT NULL DEFAULT 100,
+  cooldown_minutes INTEGER NOT NULL DEFAULT 60,
+  effects_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS forge_recipes (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  output_item TEXT NOT NULL,
+  materials_json TEXT NOT NULL DEFAULT '{}',
+  coin_cost INTEGER NOT NULL DEFAULT 0,
+  ce_cost INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS crime_definitions (

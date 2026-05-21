@@ -20,10 +20,18 @@ export async function handleCommand(interaction) {
   if (cmd === 'profile') {
     const { player, status, inventory } = GameService.profile(uid, name);
     const inv = inventory.map((i) => `${i.name} x${i.quantity}`).join('\n') || 'Empty';
+    const equipped = GameService.equipped(player.id)
+      .map((e) => `${e.equip_slot}: ${e.name}`)
+      .join('\n') || 'None';
     const embed = playerEmbed(player);
     embed.addFields(
+      {
+        name: 'Worker',
+        value: `Labor ${player.manual_labor} | INT ${player.intelligence} | END ${player.endurance} | TEC ${player.technique}`
+      },
+      { name: 'Equipped', value: equipped },
       { name: 'Status', value: status.blocked.blocked ? `${status.blocked.reason} until ${status.blocked.until}` : 'Active' },
-      { name: 'Inventory', value: inv.slice(0, 1000) }
+      { name: 'Inventory', value: inv.slice(0, 900) }
     );
     return { embed };
   }
@@ -34,6 +42,8 @@ export async function handleCommand(interaction) {
       content:
         `**${s.grade}** Lv.${s.level} | CE ${s.ce} | Wheel spins left: ${s.wheel_spins_left}\n` +
         `STR ${s.strength} DEF ${s.defense} SPD ${s.speed} DEX ${s.dexterity}\n` +
+        `Worker: LAB ${s.manual_labor} INT ${s.intelligence} END ${s.endurance} TEC ${s.technique}\n` +
+        `Gym: ${s.gym_id || 'training_grounds'}${s.company_id ? ` | Company: ${s.company_id}` : ''}\n` +
         (s.hospital_until ? `Infirmary until: ${s.hospital_until}\n` : '') +
         (s.jail_until ? `Prison Realm until: ${s.jail_until}\n` : '') +
         `Login streak: ${s.login_streak}`
@@ -155,7 +165,61 @@ export async function handleCommand(interaction) {
     }
     return reply(GameService.goldBuy(uid, name, interaction.options.getInteger('listing')), interaction);
   }
-  if (cmd === 'forge') return reply(GameService.forge(uid, name), interaction);
+  if (cmd === 'forge') {
+    const recipe = interaction.options.getString('recipe');
+    if (!recipe) {
+      const list = GameService.recipes()
+        .map((r) => `\`${r.id}\` ${r.name} → ${r.output_item}`)
+        .join('\n');
+      return { content: list || 'No recipes.' };
+    }
+    return reply(GameService.forge(uid, name, recipe), interaction);
+  }
+  if (cmd === 'gym') {
+    const action = interaction.options.getString('action') || 'list';
+    if (action === 'set') {
+      return reply(GameService.setGym(uid, name, interaction.options.getString('id') || 'training_grounds'), interaction);
+    }
+    return {
+      content: GameService.gyms()
+        .map((g) => `\`${g.id}\` ${g.name} x${g.train_multiplier} (Lv${g.min_level}${g.unlock_cost ? `, ${g.unlock_cost}c` : ''})`)
+        .join('\n')
+    };
+  }
+  if (cmd === 'worker') {
+    return reply(
+      GameService.trainWorker(uid, name, interaction.options.getString('stat'), interaction.options.getInteger('sets') || 1),
+      interaction
+    );
+  }
+  if (cmd === 'equip') return reply(GameService.equip(uid, name, interaction.options.getString('item')), interaction);
+  if (cmd === 'unequip') return reply(GameService.unequip(uid, name, interaction.options.getString('slot')), interaction);
+  if (cmd === 'company') {
+    const action = interaction.options.getString('action') || 'list';
+    if (action === 'join') return reply(GameService.joinCompany(uid, name, interaction.options.getString('id')), interaction);
+    return {
+      content: GameService.companies()
+        .map((c) => `\`${c.id}\` ${c.name} (${c.worker_stat}, x${c.payout_mult})`)
+        .join('\n')
+    };
+  }
+  if (cmd === 'drug') {
+    const action = interaction.options.getString('action') || 'list';
+    if (action === 'use') return reply(GameService.useDrug(uid, name, interaction.options.getString('id')), interaction);
+    return {
+      content: GameService.drugs()
+        .map((d) => `\`${d.id}\` ${d.name} — ${d.cost}c (${d.cooldown_minutes}m CD)`)
+        .join('\n')
+    };
+  }
+  if (cmd === 'explore') {
+    const action = interaction.options.getString('action');
+    if (action === 'look') return reply(GameService.explore(uid, name), interaction);
+    if (action === 'move') return reply(GameService.exploreMove(uid, name, interaction.options.getString('direction') || 'north'), interaction);
+    if (action === 'travel') return reply(GameService.exploreTravel(uid, name, interaction.options.getString('area') || 'tokyo_jujutsu_high'), interaction);
+    if (action === 'mine') return reply(GameService.exploreMine(uid, name), interaction);
+  }
+  if (cmd === 'talk') return reply(GameService.talkNpc(uid, name, interaction.options.getString('npc')), interaction);
   if (cmd === 'commodity') {
     const action = interaction.options.getString('action') || 'list';
     if (action === 'list') {

@@ -1,5 +1,19 @@
 import { getOrCreatePlayer, getPlayerByDiscord, getInventory, getStatus } from './player.js';
 import { train } from './train.js';
+import { listGyms, setGym as setGymAction } from './gym.js';
+import { trainWorker as trainWorkerAction } from './worker.js';
+import { equipItem, unequipSlot, getEquippedSummary } from './equip.js';
+import { listCompanies, joinCompany as joinCompanyAction, companyWork } from './company.js';
+import { listDrugs, useDrug as useDrugAction } from './drugs.js';
+import {
+  exploreStatus,
+  exploreTravel,
+  exploreMove,
+  exploreMine,
+  talkNpc,
+  listNpcsInRoom
+} from './explore.js';
+import { listRecipes, forgeRecipe as forgeRecipeAction } from './recipes.js';
 import { loungeAction } from './lounge.js';
 import { listCrimes, commitCrime } from './crime.js';
 import {
@@ -146,8 +160,59 @@ export class GameService {
   static goldBuy(discordId, username, listingId) {
     return buyGoldListing(discordId, username, listingId);
   }
-  static forge(discordId, username) {
-    return forgeAction(discordId, username);
+  static forge(discordId, username, recipeId) {
+    return forgeAction(discordId, username, recipeId);
+  }
+  static gyms() {
+    return listGyms();
+  }
+  static setGym(discordId, username, gymId) {
+    return setGymAction(discordId, username, gymId);
+  }
+  static trainWorker(discordId, username, stat, sets) {
+    return trainWorkerAction(discordId, username, stat, sets);
+  }
+  static equip(discordId, username, itemId) {
+    return equipItem(discordId, username, itemId);
+  }
+  static unequip(discordId, username, slot) {
+    return unequipSlot(discordId, username, slot);
+  }
+  static equipped(playerId) {
+    return getEquippedSummary(playerId);
+  }
+  static companies() {
+    return listCompanies();
+  }
+  static joinCompany(discordId, username, companyId) {
+    return joinCompanyAction(discordId, username, companyId);
+  }
+  static drugs() {
+    return listDrugs();
+  }
+  static useDrug(discordId, username, drugId) {
+    return useDrugAction(discordId, username, drugId);
+  }
+  static explore(discordId, username) {
+    return exploreStatus(discordId, username);
+  }
+  static exploreTravel(discordId, username, areaId) {
+    return exploreTravel(discordId, username, areaId);
+  }
+  static exploreMove(discordId, username, dir) {
+    return exploreMove(discordId, username, dir);
+  }
+  static exploreMine(discordId, username) {
+    return exploreMine(discordId, username);
+  }
+  static talkNpc(discordId, username, npcId) {
+    return talkNpc(discordId, username, npcId);
+  }
+  static recipes() {
+    return listRecipes();
+  }
+  static forgeRecipe(discordId, username, recipeId) {
+    return forgeRecipeAction(discordId, username, recipeId);
   }
   static commodities() {
     return listCommodities();

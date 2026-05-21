@@ -1,6 +1,7 @@
 import { getDb } from './db.js';
 import { getOrCreatePlayer, addItem, removeItem } from './player.js';
 import { audit } from './util.js';
+import { forgeRecipe } from './recipes.js';
 
 export function listEducation() {
   return getDb().prepare('SELECT * FROM education_courses ORDER BY min_level').all();
@@ -161,23 +162,8 @@ export function goldBuy(discordId, username, listingId) {
   return { ok: true, message: 'Purchased cursed objects!', player: getOrCreatePlayer(discordId, username) };
 }
 
-export function forge(discordId, username) {
-  const player = getOrCreatePlayer(discordId, username);
-  if (!removeItem(player.id, 'iron_ore', 2)) return { ok: false, message: 'Need 2x Cursed Iron.' };
-  if (!removeItem(player.id, 'spirit_core', 1)) return { ok: false, message: 'Need 1x Spirit Core.' };
-  const cost = 10000;
-  if (player.coins < cost) return { ok: false, message: `Forging costs ${cost} coins.` };
-  const db = getDb();
-  db.prepare('UPDATE players SET coins = coins - ?, strength = strength + 5 WHERE id = ?').run(
-    cost,
-    player.id
-  );
-  addItem(player.id, 'cursed_blade', 1);
-  return {
-    ok: true,
-    message: 'Forged a Cursed Blade! +5 permanent strength.',
-    player: getOrCreatePlayer(discordId, username)
-  };
+export function forge(discordId, username, recipeId = 'cursed_blade') {
+  return forgeRecipe(discordId, username, recipeId);
 }
 
 export function listCommodities() {

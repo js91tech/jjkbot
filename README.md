@@ -99,11 +99,17 @@ Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process
 
 ## Discord commands
 
-`/profile` `/status` `/train` `/crime` `/work` `/bank` `/shop` `/wheel` `/lounge` `/attack` `/mug` `/rob` `/bust` `/inventory` `/use`
+**Core:** `/profile` `/status` `/train` `/crime` `/work` `/bank` `/shop` `/wheel` `/lounge` `/attack` `/mug` `/rob` `/bust` `/inventory` `/use`
 
-Phase 2+: `/education` `/clan` `/estate` `/market` `/forge` `/commodity` `/gold`
+**SoL stats & gear:** `/worker` `/gym` `/equip` `/unequip` `/company` `/drug`
 
-Phase 3+: `/delve` `/grabbag` `/leaderboard` `/world` `/admin`
+**World:** `/explore` `/talk` `/world`
+
+**Phase 2+:** `/education` `/clan` `/estate` `/market` `/forge` `/commodity` `/gold`
+
+**Phase 3+:** `/delve` `/grabbag` `/leaderboard` `/admin`
+
+Train combat: `/train stat:Defense sets:10`. Worker stats: `/worker stat:Intelligence sets:5`. Join company then `/work` for boosted payouts.
 
 ## Grade protection
 

@@ -1,0 +1,186 @@
+{
+  "gojo": {
+    "name": "Satoru Gojo",
+    "title": "The Strongest Sorcerer",
+    "emoji": "🕶️",
+    "area": "tokyo_jujutsu_high",
+    "rooms": ["courtyard"],
+    "personality": "Playful and confident, rarely serious. Loves sweets and his students.",
+    "dialogue": {
+      "0": {
+        "text": "Yo! Welcome to Jujutsu High. I'm Gojo Satoru, the strongest. Don't worry, you're in good hands~",
+        "responses": ["Tell me about cursed energy", "How do I get stronger?", "What should I do first?"]
+      },
+      "1": {
+        "text": "Cursed energy flows through all living things. Negative emotions create curses. As a sorcerer, you'll learn to channel that energy. Your technique defines how you fight – everyone's is unique.",
+        "responses": ["How do I get stronger?", "Tell me about domains"]
+      },
+      "2": {
+        "text": "Strength comes from experience, training, and understanding your own technique. Mine? Limitless – I control space itself. Don't try to copy me though, find YOUR path.",
+        "responses": ["What should I do first?", "Tell me about domains"]
+      },
+      "3": {
+        "text": "Start by exploring the school grounds. Then head out to gather cursed materials – you'll need them to forge tools. Combat will teach you the most. Oh, and stay alive~",
+        "responses": ["Tell me about domains", "Thanks, Gojo-sensei"]
+      },
+      "4": {
+        "text": "Domain Expansion is the pinnacle of jujutsu combat – manifesting your innate domain using a barrier. It guarantees a hit with your technique. Only Grade 1 and above usually manage it. You've got a long way to go, but I believe in you!",
+        "responses": ["Thanks, Gojo-sensei"]
+      },
+      "5": {
+        "text": "That's the spirit! Remember – beneath you is infinity, and above you is the sky. Now get out there and make me proud!",
+        "responses": []
+      }
+    }
+  },
+  "yaga": {
+    "name": "Masamichi Yaga",
+    "title": "Principal of Tokyo Jujutsu High",
+    "emoji": "👨‍🏫",
+    "area": "tokyo_jujutsu_high",
+    "rooms": ["main_hall", "principals_office"],
+    "personality": "Stern and disciplined. Cares deeply about his students' well-being.",
+    "dialogue": {
+      "0": {
+        "text": "You must be a new student. I am Principal Yaga. Jujutsu sorcery is not a game – lives are at stake. Take your training seriously.",
+        "responses": ["What are the rules here?", "How do missions work?", "Tell me about cursed corpses"]
+      },
+      "1": {
+        "text": "Rule one: protect civilians. Rule two: never underestimate a curse. Rule three: your comrades are your lifeline. Violate these and you'll answer to me personally.",
+        "responses": ["How do missions work?", "Tell me about cursed corpses"]
+      },
+      "2": {
+        "text": "Missions are assigned based on your grade. Grade 4 handles minor curses in urban areas. Higher grades face increasingly dangerous threats. Prove yourself in combat and you'll rank up.",
+        "responses": ["Tell me about cursed corpses"]
+      },
+      "3": {
+        "text": "Cursed corpses are my specialty – autonomous dolls powered by cursed energy. I teach this art to promising students. Perhaps you'll be worthy someday. Now get to training.",
+        "responses": ["Understood, Principal"]
+      },
+      "4": {
+        "text": "Good. Dismissed – and stay out of trouble.",
+        "responses": []
+      }
+    }
+  },
+  "nanami": {
+    "name": "Kento Nanami",
+    "title": "Grade 1 Jujutsu Sorcerer",
+    "emoji": "👔",
+    "area": "tokyo_jujutsu_high",
+    "rooms": ["training_grounds"],
+    "personality": "Professional and pragmatic. Values work-life balance. Dispatches curses efficiently.",
+    "dialogue": {
+      "0": {
+        "text": "Hello. I'm Nanami Kento. I supervise training sessions here. If you're serious about becoming a sorcerer, I expect 100% effort.",
+        "responses": ["Teach me combat tips", "What's the best approach to fighting?", "How do I manage cursed energy?"]
+      },
+      "1": {
+        "text": "In combat, target selection matters. Aiming for the head deals more damage but is harder to land. The torso is your safest bet for consistent output. Know when to be aggressive and when to defend.",
+        "responses": ["What's the best approach to fighting?", "How do I manage cursed energy?"]
+      },
+      "2": {
+        "text": "My approach is simple: assess the threat level, engage efficiently, and don't waste cursed energy. Every technique has a cost. Overtime is for work, not fighting. Manage your resources.",
+        "responses": ["How do I manage cursed energy?", "Thanks for the advice"]
+      },
+      "3": {
+        "text": "Cursed energy is your fuel. Running out mid-fight means death. Use potions, visit the cafeteria to recover, and invest in CE capacity upgrades. A sorcerer who can't manage their energy is already dead.",
+        "responses": ["Thanks for the advice"]
+      },
+      "4": {
+        "text": "You're welcome. One more thing – if you ever feel overwhelmed, don't hesitate to fall back. Living to fight another day is always the right call. Now, back to training.",
+        "responses": []
+      }
+    }
+  },
+  "geto_informant": {
+    "name": "Mysterious Informant",
+    "title": "Unknown Alignment",
+    "emoji": "🧥",
+    "area": "shibuya_district",
+    "rooms": ["nightclub_alley"],
+    "personality": "Enigmatic and unsettling. Speaks in riddles. May have hidden motives.",
+    "dialogue": {
+      "0": {
+        "text": "Heh... a sorcerer wandering into my alley. Brave or foolish? I have information... for a price. Interested?",
+        "responses": ["What kind of information?", "You seem dangerous", "No thanks"]
+      },
+      "1": {
+        "text": "There are hidden areas that don't appear on any map. Rooms behind veils, passages beneath the city. The more you explore, the more you'll find. But be careful – some doors should stay closed.",
+        "responses": ["Tell me more about hidden areas", "What's your price?"]
+      },
+      "2": {
+        "text": "Dangerous? Perhaps. But danger is relative in our world. What matters is which side of it you stand on. Think about that as you continue your journey.",
+        "responses": ["Tell me more about hidden areas"]
+      },
+      "3": {
+        "text": "Information costs cursed energy. But I can tell you this for free – the Veil Chamber beneath Shibuya holds treasures beyond your imagination. If you're strong enough to reach it.",
+        "responses": ["Thanks for the tip"]
+      },
+      "4": {
+        "text": "Don't mention we spoke. And sorcerer... trust no one completely. Not even your teachers. *disappears into the shadows*",
+        "responses": []
+      }
+    }
+  },
+  "gakuganji": {
+    "name": "Yoshinobu Gakuganji",
+    "title": "Principal of Kyoto Jujutsu High",
+    "emoji": "🧓",
+    "area": "jujutsu_high_kyoto",
+    "rooms": ["kyoto_courtyard"],
+    "personality": "Conservative and traditional. Wary of those who deviate from jujutsu norms.",
+    "dialogue": {
+      "0": {
+        "text": "A Tokyo student? Hmph. We do things differently here in Kyoto. We train harder, fight smarter, and don't coddle our students.",
+        "responses": ["What can I do here?", "Tell me about the Goodwill Event", "How is Kyoto different?"]
+      },
+      "1": {
+        "text": "The Kyoto branch has its own training facilities, arenas, and the Cursed Archives. If you're looking for rare materials, the sealed vault below the library is rumored to contain extraordinary resources. But it's heavily guarded.",
+        "responses": ["Tell me about the Goodwill Event"]
+      },
+      "2": {
+        "text": "The Sister-School Goodwill Event pits Tokyo against Kyoto students. It's more than a tournament – it's a chance to prove which approach to jujutsu is superior. Tokyo may have won recently, but that won't last.",
+        "responses": ["How is Kyoto different?"]
+      },
+      "3": {
+        "text": "Kyoto emphasizes tradition and discipline. We don't rely on flashy techniques or prodigies. Every student here earns their strength through rigorous training. Something your school could learn from.",
+        "responses": ["Understood, sir"]
+      },
+      "4": {
+        "text": "See that you train hard while you're here. I won't go easy on outsiders. The arena is to the east – prove your worth if you dare.",
+        "responses": []
+      }
+    }
+  },
+  "colony_merchant": {
+    "name": "Colony Merchant",
+    "title": "Sakurajima Trader",
+    "emoji": "💰",
+    "area": "sakurajima_colony",
+    "rooms": ["colony_village"],
+    "personality": "Friendly and opportunistic. Always looking to make a deal.",
+    "dialogue": {
+      "0": {
+        "text": "Welcome to Sakurajima Colony! I trade in rare cursed materials that you won't find on the mainland. Take a look around – the mines here produce some incredible ores.",
+        "responses": ["What do you recommend I mine?", "Any tips for surviving here?", "What's special about this island?"]
+      },
+      "1": {
+        "text": "The cliffside mines are your best bet for cursed ore – essential for forging. Go deeper for rare gems. But watch out – the deep shaft has boss-level curses lurking.",
+        "responses": ["Any tips for surviving here?", "What's special about this island?"]
+      },
+      "2": {
+        "text": "This colony operates under its own rules. Strong sorcerers battle for territory and resources. Don't wander too far from the village until you're ready. The forest path and ancient shrine are particularly dangerous.",
+        "responses": ["What's special about this island?"]
+      },
+      "3": {
+        "text": "Sakurajima sits on a massive cursed energy reservoir. That's why the materials here are so potent – and why the curses are so dangerous. It's a treasure trove for the bold and a graveyard for the careless.",
+        "responses": ["Thanks for the advice"]
+      },
+      "4": {
+        "text": "Happy hunting! Come back with some rare gems and I'll give you a good price. Stay safe out there, sorcerer!",
+        "responses": []
+      }
+    }
+  }
+}

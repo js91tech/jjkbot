@@ -170,7 +170,146 @@ export function buildSlashCommands() {
       .addIntegerOption((o) => o.setName('amount').setDescription('Gold amount'))
       .addIntegerOption((o) => o.setName('price').setDescription('Price per unit'))
       .addIntegerOption((o) => o.setName('listing').setDescription('Listing id to buy')),
-    new SlashCommandBuilder().setName('forge').setDescription('Forge cursed tool'),
+    new SlashCommandBuilder()
+      .setName('forge')
+      .setDescription('Forge gear from recipes')
+      .addStringOption((o) =>
+        o
+          .setName('recipe')
+          .setDescription('Recipe id (list with /forge no recipe)')
+          .addChoices(
+            { name: 'Cursed Blade', value: 'cursed_blade' },
+            { name: 'Spirit Spear', value: 'spirit_spear' },
+            { name: 'Armor Vest', value: 'armor_vest' },
+            { name: 'Domain Charm', value: 'domain_charm' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('gym')
+      .setDescription('Training gym (SoL multiplier)')
+      .addStringOption((o) =>
+        o
+          .setName('action')
+          .setDescription('List or set gym')
+          .addChoices({ name: 'list', value: 'list' }, { name: 'set', value: 'set' })
+      )
+      .addStringOption((o) =>
+        o
+          .setName('id')
+          .setDescription('Gym id when setting')
+          .addChoices(
+            { name: 'Training Grounds', value: 'training_grounds' },
+            { name: 'Cursed Pit', value: 'cursed_pit' },
+            { name: 'Domain Chamber', value: 'domain_chamber' },
+            { name: 'Zenin Dojo', value: 'zenin_dojo' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('worker')
+      .setDescription('Train worker stats (company jobs)')
+      .addStringOption((o) =>
+        o
+          .setName('stat')
+          .setDescription('Worker stat')
+          .setRequired(true)
+          .addChoices(
+            { name: 'Manual Labor', value: 'manual_labor' },
+            { name: 'Intelligence', value: 'intelligence' },
+            { name: 'Endurance', value: 'endurance' },
+            { name: 'Technique', value: 'technique' }
+          )
+      )
+      .addIntegerOption((o) => o.setName('sets').setDescription('Sets 1-20').setMinValue(1).setMaxValue(20)),
+    new SlashCommandBuilder()
+      .setName('equip')
+      .setDescription('Equip weapon, armor, or gear')
+      .addStringOption((o) => o.setName('item').setDescription('Item id from inventory').setRequired(true)),
+    new SlashCommandBuilder()
+      .setName('unequip')
+      .setDescription('Unequip a slot')
+      .addStringOption((o) =>
+        o
+          .setName('slot')
+          .setDescription('Slot')
+          .setRequired(true)
+          .addChoices(
+            { name: 'weapon', value: 'weapon' },
+            { name: 'armor', value: 'armor' },
+            { name: 'gear', value: 'gear' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('company')
+      .setDescription('SoL-style company work')
+      .addStringOption((o) =>
+        o
+          .setName('action')
+          .setDescription('Action')
+          .addChoices({ name: 'list', value: 'list' }, { name: 'join', value: 'join' })
+      )
+      .addStringOption((o) => o.setName('id').setDescription('Company id')),
+    new SlashCommandBuilder()
+      .setName('drug')
+      .setDescription('Boosters with cooldowns')
+      .addStringOption((o) =>
+        o
+          .setName('action')
+          .setDescription('List or use')
+          .addChoices({ name: 'list', value: 'list' }, { name: 'use', value: 'use' })
+      )
+      .addStringOption((o) =>
+        o
+          .setName('id')
+          .setDescription('Drug id')
+          .addChoices(
+            { name: 'CE Shot', value: 'ce_shot' },
+            { name: 'Focus Tea', value: 'focus_tea' },
+            { name: 'Resolve Pill', value: 'resolve_pill' },
+            { name: 'Booster Serum', value: 'booster_serum' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('explore')
+      .setDescription('Navigate areas (from zip world data)')
+      .addStringOption((o) =>
+        o
+          .setName('action')
+          .setDescription('Explore action')
+          .setRequired(true)
+          .addChoices(
+            { name: 'look', value: 'look' },
+            { name: 'move', value: 'move' },
+            { name: 'travel', value: 'travel' },
+            { name: 'mine', value: 'mine' }
+          )
+      )
+      .addStringOption((o) => o.setName('direction').setDescription('north/south/east/west/up'))
+      .addStringOption((o) =>
+        o
+          .setName('area')
+          .setDescription('Area id for travel')
+          .addChoices(
+            { name: 'Tokyo High', value: 'tokyo_jujutsu_high' },
+            { name: 'Shibuya', value: 'shibuya_district' },
+            { name: 'Kyoto', value: 'jujutsu_high_kyoto' },
+            { name: 'Sakurajima', value: 'sakurajima_colony' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('talk')
+      .setDescription('Talk to NPC in current room')
+      .addStringOption((o) =>
+        o
+          .setName('npc')
+          .setDescription('NPC id')
+          .setRequired(true)
+          .addChoices(
+            { name: 'Gojo', value: 'gojo' },
+            { name: 'Yaga', value: 'yaga' },
+            { name: 'Nanami', value: 'nanami' },
+            { name: 'Maki', value: 'maki' }
+          )
+      ),
     new SlashCommandBuilder()
       .setName('commodity')
       .setDescription('Trade commodities')
