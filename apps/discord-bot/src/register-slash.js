@@ -1,17 +1,31 @@
 import { REST, Routes } from 'discord.js';
 import { buildSlashCommands } from './slash-commands.js';
 
+const SNOWFLAKE = /^\d{17,20}$/;
+
+function requireSnowflake(raw, envName) {
+  const value = String(raw ?? '').trim();
+  if (!SNOWFLAKE.test(value)) {
+    throw new Error(
+      `${envName} must be a numeric Discord ID (17–20 digits). ` +
+        `Copy Application ID from Discord Developer Portal → General Information.`
+    );
+  }
+  return value;
+}
+
 /**
  * Register slash commands with Discord API.
  * Set DISCORD_GUILD_ID for instant commands on one server (recommended for testing).
  */
 export async function registerSlashCommands() {
   const token = process.env.DISCORD_TOKEN;
-  const clientId = process.env.DISCORD_CLIENT_ID;
-  const guildId = process.env.DISCORD_GUILD_ID;
+  const clientId = requireSnowflake(process.env.DISCORD_CLIENT_ID, 'DISCORD_CLIENT_ID');
+  const guildRaw = process.env.DISCORD_GUILD_ID;
+  const guildId = guildRaw ? requireSnowflake(guildRaw, 'DISCORD_GUILD_ID') : null;
 
-  if (!token || !clientId) {
-    throw new Error('DISCORD_TOKEN and DISCORD_CLIENT_ID are required to register commands');
+  if (!token) {
+    throw new Error('DISCORD_TOKEN is required to register commands');
   }
 
   const commands = buildSlashCommands();

@@ -36,7 +36,12 @@ client.once(Events.ClientReady, async (c) => {
       await registerSlashCommands();
     } catch (err) {
       console.error('Slash command registration failed:', err.message);
-      console.error('Set DISCORD_CLIENT_ID on the bot service and DISCORD_GUILD_ID for instant server commands.');
+      if (!process.env.DISCORD_CLIENT_ID) {
+        console.error('Add DISCORD_CLIENT_ID (Application ID from Discord Developer Portal) on this service.');
+      }
+      if (!process.env.DISCORD_GUILD_ID) {
+        console.error('Optional: DISCORD_GUILD_ID = your server ID for instant /commands (right-click server → Copy Server ID).');
+      }
     }
   }
 });

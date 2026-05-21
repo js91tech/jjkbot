@@ -2,6 +2,7 @@
   "name": "jjk-bot",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Jujutsu Kaisen-themed Samurai of Legend-style MUD (Discord + Web)",
   "workspaces": [
     "packages/*",
