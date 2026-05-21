@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><%= typeof title !== 'undefined' ? title : 'JJK-Bot' %></title>
   <link rel="stylesheet" href="/public/style.css" />
+  <% if (typeof pageClass !== 'undefined' && pageClass === 'page-dashboard') { %>
+  <link rel="stylesheet" href="/public/dashboard.css" />
+  <% } %>
   <script src="/public/tooltips.js" defer></script>
 </head>
-<body>
+<body<% if (typeof pageClass !== 'undefined') { %> class="<%= pageClass %>"<% } %>>
 <header>
   <strong>JJK Sorcerer MUD</strong>
   <nav>

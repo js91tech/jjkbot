@@ -241,7 +241,7 @@
       }
       const spec = FORM[path];
       if (!spec) return;
-      const panel = form.closest('.panel, .action-card, .escape-actions');
+      const panel = form.closest('.panel, .action-card, .action-tile, .shelf-panel, .lounge-panel, .escape-actions');
       if (panel) {
         const h3 = panel.querySelector('h3');
         if (h3 && spec.panel) bind(h3, spec.panel);
@@ -268,8 +268,8 @@
   }
 
   function bindStats() {
-    document.querySelectorAll('.stat-card').forEach((card) => {
-      const label = card.querySelector('.label')?.textContent?.trim();
+    document.querySelectorAll('.stat-card, .resource-stone').forEach((card) => {
+      const label = (card.querySelector('.label') || card.querySelector('.resource-label'))?.textContent?.trim();
       if (STAT[label]) bind(card, STAT[label]);
     });
   }
