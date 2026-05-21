@@ -2,6 +2,7 @@
 # Set variable on each service:
 #   Web service → SERVICE=web
 #   Bot service → SERVICE=bot
+#   API service → SERVICE=api  (for 2D Activity client)
 # Or name services with "web" / "bot" in the name (auto-detected).
 
 [deploy]

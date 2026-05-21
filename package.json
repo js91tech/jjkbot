@@ -12,6 +12,8 @@
     "db:init": "npm run db:init -w @jjk/game-core",
     "start:bot": "npm start -w @jjk/discord-bot",
     "start:web": "npm start -w @jjk/web",
+    "start:api": "npm start -w @jjk/api",
+    "dev:api": "npm run dev -w @jjk/api",
     "start:railway": "node scripts/railway-service-start.js",
     "start": "node scripts/start-all.js",
     "test": "npm test -w @jjk/game-core"

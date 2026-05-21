@@ -96,6 +96,17 @@ Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process
 - `packages/game-core` — all rules, DB, ticks (CE regen, hospital/jail)
 - `apps/discord-bot` — slash command parity
 - `apps/web` — dashboard, gym, missions, PvP, bank, shop, wheel
+- `apps/api` — REST API for **jjk-game-2d** (Discord Activity / Phaser client)
+
+### 2D client (separate repo)
+
+Top-down game: **[jjk-game-2d](https://github.com/js91tech/jjk-game-2d)** (create/push your copy).  
+Runs against `apps/api` — same save as bot when `DATABASE_PATH` is shared.
+
+```bash
+npm run start:api          # port 3848
+ALLOW_DEV_AUTH=true      # local Phaser dev
+```
 
 **Bot and web are synced** when both use the same `DATABASE_PATH` (e.g. `/data/jjk.db` on a shared Railway volume). Same Discord account = same character on bot and site.
 

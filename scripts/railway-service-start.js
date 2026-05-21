@@ -6,9 +6,10 @@ import { spawn } from 'child_process';
 
 function detectService() {
   const explicit = (process.env.SERVICE || '').toLowerCase();
-  if (explicit === 'web' || explicit === 'bot') return explicit;
+  if (explicit === 'web' || explicit === 'bot' || explicit === 'api') return explicit;
 
   const name = (process.env.RAILWAY_SERVICE_NAME || '').toLowerCase();
+  if (name.includes('api')) return 'api';
   if (name.includes('web')) return 'web';
   if (name.includes('bot') || name.includes('discord')) return 'bot';
 
@@ -16,10 +17,9 @@ function detectService() {
 }
 
 const service = detectService();
-const args =
-  service === 'web'
-    ? ['run', 'start', '-w', '@jjk/web']
-    : ['run', 'start', '-w', '@jjk/discord-bot'];
+const workspace =
+  service === 'web' ? '@jjk/web' : service === 'api' ? '@jjk/api' : '@jjk/discord-bot';
+const args = ['run', 'start', '-w', workspace];
 
 console.log(
   `Railway start: ${service} (SERVICE=${process.env.SERVICE || '-'} RAILWAY_SERVICE_NAME=${process.env.RAILWAY_SERVICE_NAME || '-'})`
