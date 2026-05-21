@@ -11,12 +11,23 @@ process.env.DATABASE_PATH =
   process.env.DATABASE_PATH || path.resolve(__dirname, '../../../data/jjk.db');
 
 if (!process.env.DISCORD_TOKEN) {
-  console.error('DISCORD_TOKEN required');
+  console.error('FATAL: DISCORD_TOKEN is missing on this Railway service. Add it under Variables.');
   process.exit(1);
 }
 
+console.log('Starting JJK Discord bot...');
+console.log('DATABASE_PATH=', process.env.DATABASE_PATH || '(default)');
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const stopTicks = GameService.startScheduler();
+let stopTicks = () => {};
+try {
+  stopTicks = GameService.startScheduler();
+} catch (err) {
+  console.error('Scheduler failed:', err.message);
+}
+
+client.on('error', (err) => console.error('Discord client error:', err));
+process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 
 client.once(Events.ClientReady, async (c) => {
   console.log(`JJK-Bot logged in as ${c.user.tag}`);
@@ -50,7 +61,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN).catch((err) => {
+  console.error('FATAL: Discord login failed — check DISCORD_TOKEN is valid and not truncated.');
+  console.error(err.message || err);
+  process.exit(1);
+});
 
 process.on('SIGINT', () => {
   stopTicks();
