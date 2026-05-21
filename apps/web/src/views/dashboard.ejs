@@ -1,39 +1,63 @@
 <%- include('partials/head', { loggedIn: true, title: 'Dashboard' }) %>
-<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
-<h1><%= player.username %> &mdash; <%= player.grade %> (Lv.<%= player.level %>)</h1>
+
+<% if (flash) { %>
+<div class="flash-wrap <%= flashOk ? '' : 'error' %>">
+  <% if (flashGif) { %><img class="flash-gif" src="<%= flashGif %>" alt="Action" loading="lazy" /><% } %>
+  <div class="flash-text"><%= flash %></div>
+</div>
+<% } %>
+
+<div class="hero">
+  <div class="hero-bg" style="background-image: url('<%= heroImage %>')"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1><%= player.username %> <span class="grade-badge"><%= player.grade %></span></h1>
+    <p class="stat">Level <%= player.level %> · <%= player.world_id %> · Gym: <%= player.gym_id %></p>
+    <p class="stat" style="margin-top:0.5rem;color:var(--ce)">Bot &amp; web share the same save — one <code>DATABASE_PATH</code> on Railway.</p>
+  </div>
+</div>
+
+<% if (confinement && confinement.confined) { %>
+<div class="panel alert-panel">
+  <h3><%= confinement.reason === 'jail' ? '⛓️ Prison Realm' : '🏥 Shoko\'s Infirmary' %></h3>
+  <p><strong><%= confinement.minutesLeft %> minutes</strong> remaining (until <%= confinement.until %>)</p>
+  <div class="escape-actions">
+    <% if (confinement.reason === 'hospital') { %>
+      <form method="post" action="/escape"><input type="hidden" name="place" value="hospital" /><input type="hidden" name="method" value="pay" /><button type="submit">Pay medical bill</button></form>
+      <form method="post" action="/escape"><input type="hidden" name="place" value="hospital" /><input type="hidden" name="method" value="ce" /><button type="submit" class="secondary">CE escape (40 CE)</button></form>
+      <form method="post" action="/escape"><input type="hidden" name="place" value="hospital" /><input type="hidden" name="method" value="item" /><button type="submit" class="secondary">Use Reversal Kit</button></form>
+    <% } else { %>
+      <form method="post" action="/escape"><input type="hidden" name="place" value="jail" /><input type="hidden" name="method" value="pay" /><button type="submit">Pay bail</button></form>
+      <form method="post" action="/escape"><input type="hidden" name="place" value="jail" /><input type="hidden" name="method" value="item" /><button type="submit" class="secondary">Prison Key</button></form>
+      <a class="btn secondary" href="/pvp">Ask ally to bust you</a>
+    <% } %>
+  </div>
+</div>
+<% } %>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="label">Coins</div><div class="value"><%= player.coins.toLocaleString() %></div></div>
+  <div class="stat-card"><div class="label">Bank</div><div class="value"><%= player.bank_balance.toLocaleString() %></div></div>
+  <div class="stat-card"><div class="label">CE</div><div class="value"><%= player.ce %>/100</div></div>
+  <div class="stat-card"><div class="label">Focus</div><div class="value"><%= player.focus %></div></div>
+  <div class="stat-card"><div class="label">Wheel spins</div><div class="value"><%= status.wheel_spins_left %></div></div>
+  <div class="stat-card"><div class="label">Company</div><div class="value" style="font-size:0.85rem"><%= player.company_id || '—' %></div></div>
+</div>
+
+<div class="panel">
+  <h3>Combat stats</h3>
+  <div class="combat-bar">
+    <span>STR <%= player.strength %></span>
+    <span>DEF <%= player.defense %></span>
+    <span>SPD <%= player.speed %></span>
+    <span>DEX <%= player.dexterity %></span>
+  </div>
+  <p class="stat" style="margin-top:0.75rem">Worker — LAB <%= player.manual_labor %> · INT <%= player.intelligence %> · END <%= player.endurance %> · TEC <%= player.technique %></p>
+</div>
+
 <div class="grid">
-  <div class="panel">
-    <h3>Stats</h3>
-    <p>Coins: <%= player.coins.toLocaleString() %> | Bank: <%= player.bank_balance.toLocaleString() %></p>
-    <p>CE: <%= player.ce %>/100 | Focus: <%= player.focus %> | Resolve: <%= player.resolve %></p>
-    <p><strong>Combat</strong> — STR <%= player.strength %> | DEF <%= player.defense %> | SPD <%= player.speed %> | DEX <%= player.dexterity %></p>
-    <p><strong>Worker</strong> — LAB <%= player.manual_labor %> | INT <%= player.intelligence %> | END <%= player.endurance %> | TEC <%= player.technique %></p>
-    <p>Gym: <%= player.gym_id %> | Company: <%= player.company_id || 'none' %></p>
-    <p>Bravery: <%= player.bravery %> | Rice: <%= player.rice %> | Objects: <%= player.gold_objects %></p>
-    <% if (status.hospital_until) { %><p>Infirmary until <%= status.hospital_until %></p><% } %>
-    <% if (status.jail_until) { %><p>Prison Realm until <%= status.jail_until %></p><% } %>
-    <p class="stat">Wheel spins left: <%= status.wheel_spins_left %></p>
-  </div>
-  <div class="panel">
-    <h3>Worker train</h3>
-    <form method="post" action="/worker">
-      <select name="stat">
-        <option value="manual_labor">Manual Labor</option>
-        <option value="intelligence">Intelligence</option>
-        <option value="endurance">Endurance</option>
-        <option value="technique">Technique</option>
-      </select>
-      <input type="number" name="sets" value="1" min="1" max="20" />
-      <button type="submit">Train</button>
-    </form>
-  </div>
-  <div class="panel">
-    <h3>Gym / Equip</h3>
-    <form method="post" action="/gym"><input type="hidden" name="gymId" value="cursed_pit" /><button>Set Cursed Pit</button></form>
-    <form method="post" action="/equip" style="margin-top:6px"><input name="item" placeholder="item id" /><button>Equip</button></form>
-  </div>
-  <div class="panel">
-    <h3>Train combat</h3>
+  <div class="panel action-card">
+    <h3>⚔️ Train combat</h3>
     <form method="post" action="/train">
       <select name="stat">
         <option value="strength">Strength</option>
@@ -41,48 +65,71 @@
         <option value="speed">Speed</option>
         <option value="dexterity">Dexterity</option>
       </select>
-      <input type="number" name="sets" value="1" min="1" max="20" />
+      <input type="number" name="sets" value="5" min="1" max="20" />
       <button type="submit">Train</button>
     </form>
   </div>
-  <div class="panel">
-    <h3>Mission</h3>
+  <div class="panel action-card">
+    <h3>📜 Curse mission</h3>
     <form method="post" action="/crime">
       <select name="mission">
-        <option value="petty_cleanup">Petty Cleanup</option>
-        <option value="grade4_patrol">Grade-4 Patrol</option>
-        <option value="shibuya_raid">Shibuya Sweep</option>
-        <option value="special_exorcism">Special Exorcism</option>
+        <% crimes.forEach(function(c) { %>
+          <option value="<%= c.id %>" <%= c.locked ? 'disabled' : '' %>><%= c.name %> (Lv<%= c.min_level %>)<%= c.locked ? ' 🔒' : '' %></option>
+        <% }); %>
       </select>
       <button type="submit">Run</button>
     </form>
   </div>
-  <div class="panel">
-    <h3>CE Lounge</h3>
-    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="tea" /><button>Tea</button></form>
-    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="vow" /><button>Vow</button></form>
-    <form method="post" action="/lounge" style="display:inline"><input type="hidden" name="action" value="refill" /><button>Refill</button></form>
+  <div class="panel action-card">
+    <h3>💼 Work</h3>
+    <form method="post" action="/work"><button type="submit">Clock in</button></form>
   </div>
-  <div class="panel">
-    <h3>Work and Wheel</h3>
-    <form method="post" action="/work"><button>Work Job</button></form>
-    <form method="post" action="/wheel"><button>Spin Wheel</button></form>
+  <div class="panel action-card">
+    <h3>🎡 Wheel</h3>
+    <form method="post" action="/wheel"><button type="submit">Spin</button></form>
   </div>
-  <div class="panel">
-    <h3>Bank</h3>
+  <div class="panel action-card">
+    <h3>☕ CE Lounge</h3>
+    <form method="post" action="/lounge"><input type="hidden" name="action" value="tea" /><button type="submit">Tea</button></form>
+    <form method="post" action="/lounge"><input type="hidden" name="action" value="vow" /><button type="submit" class="secondary">Vow</button></form>
+    <form method="post" action="/lounge"><input type="hidden" name="action" value="refill" /><button type="submit" class="secondary">Refill</button></form>
+  </div>
+  <div class="panel action-card">
+    <h3>🏦 Treasury</h3>
     <form method="post" action="/bank">
       <select name="action"><option value="deposit">Deposit</option><option value="withdraw">Withdraw</option><option value="invest">Invest</option><option value="collect">Collect</option></select>
       <input type="number" name="amount" placeholder="Amount" />
-      <button>Go</button>
+      <button type="submit">Go</button>
     </form>
   </div>
+  <div class="panel action-card">
+    <h3>Worker train</h3>
+    <form method="post" action="/worker">
+      <select name="stat">
+        <option value="manual_labor">Labor</option>
+        <option value="intelligence">Intelligence</option>
+        <option value="endurance">Endurance</option>
+        <option value="technique">Technique</option>
+      </select>
+      <input type="number" name="sets" value="3" min="1" max="20" />
+      <button type="submit">Train</button>
+    </form>
+  </div>
+  <div class="panel action-card">
+    <h3>Gym / Equip</h3>
+    <form method="post" action="/gym"><input type="hidden" name="gymId" value="cursed_pit" /><button type="submit" class="secondary">Cursed Pit gym</button></form>
+    <form method="post" action="/equip"><input name="item" placeholder="item id" /><button type="submit">Equip</button></form>
+  </div>
 </div>
+
 <div class="panel">
   <h3>Inventory</h3>
-  <ul>
+  <ul class="inventory-list">
     <% inventory.forEach(function(i) { %>
-      <li><%= i.name %> x<%= i.quantity %></li>
+      <li><%= i.name %> ×<%= i.quantity %><% if (i.equip_slot) { %> <em>(<%= i.equip_slot %>)</em><% } %></li>
     <% }); %>
+    <% if (!inventory.length) { %><li>Empty — visit <a href="/shop">shop</a></li><% } %>
   </ul>
 </div>
+
 <%- include('partials/foot') %>

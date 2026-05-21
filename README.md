@@ -97,6 +97,15 @@ Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process
 - `apps/discord-bot` — slash command parity
 - `apps/web` — dashboard, gym, missions, PvP, bank, shop, wheel
 
+**Bot and web are synced** when both use the same `DATABASE_PATH` (e.g. `/data/jjk.db` on a shared Railway volume). Same Discord account = same character on bot and site.
+
+### Escape infirmary / Prison Realm
+
+| Place | Methods |
+|-------|---------|
+| Infirmary | `/use reversal_kit`, `/escape place:hospital method:pay`, `method:ce` (40 CE) |
+| Prison | `/escape place:jail method:pay`, `method:item` (Prison Key from shop), ally `/bust` |
+
 ## Discord commands
 
 **Core:** `/profile` `/status` `/train` `/crime` `/work` `/bank` `/shop` `/wheel` `/lounge` `/attack` `/mug` `/rob` `/bust` `/inventory` `/use`

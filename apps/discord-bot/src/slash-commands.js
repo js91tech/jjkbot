@@ -26,8 +26,7 @@ export function buildSlashCommands() {
       .addStringOption((o) =>
         o
           .setName('mission')
-          .setDescription('Mission type')
-          .setRequired(true)
+          .setDescription('Mission type (omit to list all)')
           .addChoices(
             { name: 'Petty Cleanup', value: 'petty_cleanup' },
             { name: 'Grade-4 Patrol', value: 'grade4_patrol' },
@@ -293,6 +292,29 @@ export function buildSlashCommands() {
             { name: 'Shibuya', value: 'shibuya_district' },
             { name: 'Kyoto', value: 'jujutsu_high_kyoto' },
             { name: 'Sakurajima', value: 'sakurajima_colony' }
+          )
+      ),
+    new SlashCommandBuilder()
+      .setName('escape')
+      .setDescription('Leave infirmary or Prison Realm')
+      .addStringOption((o) =>
+        o
+          .setName('place')
+          .setDescription('Where you are confined')
+          .setRequired(true)
+          .addChoices(
+            { name: 'Infirmary (hospital)', value: 'hospital' },
+            { name: 'Prison Realm (jail)', value: 'jail' }
+          )
+      )
+      .addStringOption((o) =>
+        o
+          .setName('method')
+          .setDescription('How to escape')
+          .addChoices(
+            { name: 'Pay coins', value: 'pay' },
+            { name: 'Use item', value: 'item' },
+            { name: 'CE technique (hospital only)', value: 'ce' }
           )
       ),
     new SlashCommandBuilder()

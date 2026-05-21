@@ -4,6 +4,16 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import session from 'express-session';
 import { GameService } from '@jjk/game-core';
+import { gifForAction, HERO_IMAGE } from './action-media.js';
+
+function dashRedirect(res, r, action) {
+  const params = new URLSearchParams({
+    msg: r.message || 'Done.',
+    action: action || 'default',
+    ok: r.ok !== false ? '1' : '0'
+  });
+  res.redirect(`/dashboard?${params.toString()}`);
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '../../..');
@@ -109,9 +119,25 @@ app.get('/me', requireAuth, (req, res) => {
 });
 
 app.get('/dashboard', requireAuth, (req, res) => {
-  const { player, status, inventory } = GameService.profile(req.session.discordId, req.session.username);
-  const players = GameService.listPlayers(15).filter((p) => p.discord_id !== req.session.discordId);
-  res.render('dashboard', { player, status, inventory, players, flash: req.query.msg });
+  const id = req.session.discordId;
+  const name = req.session.username;
+  const { player, status, inventory } = GameService.profile(id, name);
+  const confinement = GameService.confinement(id, name);
+  const crimes = GameService.crimes(id, name);
+  const action = req.query.action || '';
+  const flashOk = req.query.ok !== '0';
+  res.render('dashboard', {
+    player,
+    status,
+    inventory,
+    confinement,
+    crimes,
+    flash: req.query.msg,
+    flashAction: action,
+    flashGif: gifForAction(action, flashOk),
+    flashOk,
+    heroImage: HERO_IMAGE
+  });
 });
 
 app.post('/train', requireAuth, (req, res) => {
@@ -121,27 +147,47 @@ app.post('/train', requireAuth, (req, res) => {
     Number(req.body.sets) || 1,
     req.body.stat || 'strength'
   );
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'train');
+});
+
+app.post('/worker', requireAuth, (req, res) => {
+  const r = GameService.trainWorker(
+    req.session.discordId,
+    req.session.username,
+    req.body.stat,
+    Number(req.body.sets) || 1
+  );
+  dashRedirect(res, r, 'train');
 });
 
 app.post('/crime', requireAuth, (req, res) => {
   const r = GameService.crime(req.session.discordId, req.session.username, req.body.mission);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'crime');
 });
 
 app.post('/work', requireAuth, (req, res) => {
   const r = GameService.work(req.session.discordId, req.session.username);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'work');
 });
 
 app.post('/wheel', requireAuth, (req, res) => {
   const r = GameService.wheel(req.session.discordId, req.session.username);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'wheel');
 });
 
 app.post('/lounge', requireAuth, (req, res) => {
   const r = GameService.lounge(req.session.discordId, req.session.username, req.body.action);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'lounge');
+});
+
+app.post('/escape', requireAuth, (req, res) => {
+  const r = GameService.escape(
+    req.session.discordId,
+    req.session.username,
+    req.body.place,
+    req.body.method || 'pay'
+  );
+  dashRedirect(res, r, 'escape');
 });
 
 app.post('/bank', requireAuth, (req, res) => {
@@ -162,7 +208,13 @@ app.post('/shop/buy', requireAuth, (req, res) => {
 
 app.get('/pvp', requireAuth, (req, res) => {
   const players = GameService.listPlayers(30).filter((p) => p.discord_id !== req.session.discordId);
-  res.render('pvp', { players, flash: req.query.msg });
+  const flashOk = req.query.ok !== '0';
+  res.render('pvp', {
+    players,
+    flash: req.query.msg,
+    flashGif: gifForAction(req.query.action || 'attack', flashOk),
+    flashOk
+  });
 });
 
 app.post('/pvp', requireAuth, (req, res) => {
@@ -171,7 +223,12 @@ app.post('/pvp', requireAuth, (req, res) => {
   if (action === 'attack') r = GameService.attack(req.session.discordId, req.session.username, target);
   else if (action === 'mug') r = GameService.mug(req.session.discordId, req.session.username, target);
   else r = GameService.rob(req.session.discordId, req.session.username, target);
-  res.redirect('/pvp?msg=' + encodeURIComponent(r.message));
+  const params = new URLSearchParams({
+    msg: r.message,
+    action: action || 'attack',
+    ok: r.ok !== false ? '1' : '0'
+  });
+  res.redirect(`/pvp?${params.toString()}`);
 });
 
 app.post('/bust', requireAuth, (req, res) => {
@@ -208,24 +265,19 @@ app.post('/advanced', requireAuth, (req, res) => {
   res.redirect('/advanced?msg=' + encodeURIComponent(r.message));
 });
 
-app.post('/worker', requireAuth, (req, res) => {
-  const r = GameService.trainWorker(req.session.discordId, req.session.username, req.body.stat, Number(req.body.sets) || 1);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
-});
-
 app.post('/gym', requireAuth, (req, res) => {
   const r = GameService.setGym(req.session.discordId, req.session.username, req.body.gymId);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'train');
 });
 
 app.post('/equip', requireAuth, (req, res) => {
   const r = GameService.equip(req.session.discordId, req.session.username, req.body.item);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'default');
 });
 
 app.post('/drug', requireAuth, (req, res) => {
   const r = GameService.useDrug(req.session.discordId, req.session.username, req.body.drugId);
-  res.redirect('/dashboard?msg=' + encodeURIComponent(r.message));
+  dashRedirect(res, r, 'lounge');
 });
 
 app.get('/explore', requireAuth, (req, res) => {

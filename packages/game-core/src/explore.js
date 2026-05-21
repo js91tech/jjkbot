@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { getDb } from './db.js';
 import { getOrCreatePlayer, addItem } from './player.js';
 import { audit, minutesFromNow, roll } from './util.js';
-import { applyLevelUps } from './util.js';
+import { applyLevelUps, requireLevel } from './util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let areasCache = null;
@@ -61,9 +61,8 @@ export function exploreTravel(discordId, username, areaId) {
   }
   const player = getOrCreatePlayer(discordId, username);
   const area = areas[areaId];
-  if (player.level < (area.min_level || 1)) {
-    return { ok: false, message: `Requires level ${area.min_level}.` };
-  }
+  const lvl = requireLevel(player, area.min_level || 1, area.name);
+  if (!lvl.ok) return { ok: false, message: lvl.message };
   const roomId = defaultRoom(areaId);
   getDb().prepare('UPDATE players SET explore_area = ?, explore_room = ? WHERE id = ?').run(
     areaId,

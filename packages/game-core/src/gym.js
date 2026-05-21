@@ -1,6 +1,6 @@
 import { getDb } from './db.js';
 import { getOrCreatePlayer } from './player.js';
-import { audit } from './util.js';
+import { audit, requireLevel } from './util.js';
 
 export function listGyms() {
   return getDb().prepare('SELECT * FROM gym_definitions ORDER BY min_level').all();
@@ -16,7 +16,8 @@ export function setGym(discordId, username, gymId) {
   const db = getDb();
   const gym = db.prepare('SELECT * FROM gym_definitions WHERE id = ?').get(gymId);
   if (!gym) return { ok: false, message: 'Gyms: training_grounds, cursed_pit, domain_chamber, zenin_dojo' };
-  if (player.level < gym.min_level) return { ok: false, message: `Requires level ${gym.min_level}.` };
+  const lvl = requireLevel(player, gym.min_level, gym.name);
+  if (!lvl.ok) return { ok: false, message: lvl.message };
   if (gym.unlock_cost > 0 && player.coins < gym.unlock_cost) {
     return { ok: false, message: `Unlock costs ${gym.unlock_cost.toLocaleString()} coins.` };
   }

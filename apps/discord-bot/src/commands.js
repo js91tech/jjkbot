@@ -44,8 +44,8 @@ export async function handleCommand(interaction) {
         `STR ${s.strength} DEF ${s.defense} SPD ${s.speed} DEX ${s.dexterity}\n` +
         `Worker: LAB ${s.manual_labor} INT ${s.intelligence} END ${s.endurance} TEC ${s.technique}\n` +
         `Gym: ${s.gym_id || 'training_grounds'}${s.company_id ? ` | Company: ${s.company_id}` : ''}\n` +
-        (s.hospital_until ? `Infirmary until: ${s.hospital_until}\n` : '') +
-        (s.jail_until ? `Prison Realm until: ${s.jail_until}\n` : '') +
+        (s.hospital_until ? `Infirmary until: ${s.hospital_until} — /escape place:hospital\n` : '') +
+        (s.jail_until ? `Prison Realm until: ${s.jail_until} — /escape place:jail or /bust\n` : '') +
         `Login streak: ${s.login_streak}`
     };
   }
@@ -62,7 +62,19 @@ export async function handleCommand(interaction) {
     );
   }
   if (cmd === 'crime') {
-    return reply(GameService.crime(uid, name, interaction.options.getString('mission')), interaction);
+    const mission = interaction.options.getString('mission');
+    if (!mission) {
+      const list = GameService.crimes(uid, name)
+        .map((c) => (c.locked ? `🔒 \`${c.id}\` ${c.name} — Lv.${c.min_level}` : `✅ \`${c.id}\` ${c.name} — Lv.${c.min_level}`))
+        .join('\n');
+      return { content: `**Missions**\n${list}` };
+    }
+    return reply(GameService.crime(uid, name, mission), interaction);
+  }
+  if (cmd === 'escape') {
+    const place = interaction.options.getString('place');
+    const method = interaction.options.getString('method') || 'pay';
+    return reply(GameService.escape(uid, name, place, method), interaction);
   }
   if (cmd === 'work') return reply(GameService.work(uid, name), interaction);
   if (cmd === 'job') return reply(GameService.setJob(uid, name, interaction.options.getString('id')), interaction);

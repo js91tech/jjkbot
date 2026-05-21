@@ -1,5 +1,14 @@
-<%- include('partials/head', { loggedIn: false, title: 'JJK-Bot' }) %>
-<h1>Jujutsu Sorcerer MUD</h1>
-<p class="stat">Samurai of Legend-style progression — train, missions, PvP, treasury, wheel, clans, and more. JJK themed.</p>
-<p><a class="btn" href="/login">Login with Discord</a></p>
+<%- include('partials/head', { loggedIn: false, title: 'JJK Sorcerer MUD' }) %>
+<div class="home-hero">
+  <div class="hero" style="max-width:640px;margin:0 auto 2rem">
+    <div class="hero-bg" style="background-image:url('https://images.unsplash.com/photo-1612036781340-11596b5134a0?w=800&q=80')"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" style="text-align:center">
+      <h1 style="font-size:3rem">Jujutsu Sorcerer MUD</h1>
+      <p class="stat">SoL-style progression · Discord + Web · one shared save</p>
+    </div>
+  </div>
+  <p>Train stats, run missions, PvP, companies, explore Tokyo High — same account on bot and browser.</p>
+  <a class="btn" href="/login">Login with Discord</a>
+</div>
 <%- include('partials/foot') %>

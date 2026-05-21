@@ -14,6 +14,12 @@ import {
   listNpcsInRoom
 } from './explore.js';
 import { listRecipes, forgeRecipe as forgeRecipeAction } from './recipes.js';
+import {
+  escapeHospital,
+  escapeJail,
+  getConfinementStatus,
+  waitOutStatus
+} from './escape.js';
 import { loungeAction } from './lounge.js';
 import { listCrimes, commitCrime } from './crime.js';
 import {
@@ -80,6 +86,14 @@ export class GameService {
   }
   static crimes(discordId, username) {
     return listCrimes(discordId, username);
+  }
+  static confinement(discordId, username) {
+    return getConfinementStatus(getOrCreatePlayer(discordId, username));
+  }
+  static escape(discordId, username, place, method) {
+    if (place === 'hospital' || place === 'infirmary') return escapeHospital(discordId, username, method);
+    if (place === 'jail' || place === 'prison') return escapeJail(discordId, username, method);
+    return waitOutStatus(discordId, username);
   }
   static crime(discordId, username, id) {
     return commitCrime(discordId, username, id);

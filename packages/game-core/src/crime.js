@@ -1,14 +1,15 @@
 import { getDb } from './db.js';
 import balance from './balance.json' with { type: 'json' };
 import { getOrCreatePlayer } from './player.js';
-import { applyLevelUps, audit, isBlocked, minutesFromNow, roll } from './util.js';
+import { applyLevelUps, audit, isBlocked, minutesFromNow, requireLevel, roll } from './util.js';
 
 export function listCrimes(discordId, username) {
   const player = getOrCreatePlayer(discordId, username);
   const db = getDb();
-  return db
-    .prepare('SELECT * FROM crime_definitions WHERE min_level <= ? ORDER BY min_level')
-    .all(player.level);
+  return db.prepare('SELECT * FROM crime_definitions ORDER BY min_level').all().map((c) => ({
+    ...c,
+    locked: player.level < c.min_level
+  }));
 }
 
 export function commitCrime(discordId, username, crimeId) {
@@ -20,7 +21,8 @@ export function commitCrime(discordId, username, crimeId) {
   const db = getDb();
   const crime = db.prepare('SELECT * FROM crime_definitions WHERE id = ?').get(crimeId);
   if (!crime) return { ok: false, message: 'Unknown mission.' };
-  if (player.level < crime.min_level) return { ok: false, message: `Requires level ${crime.min_level}.` };
+  const lvl = requireLevel(player, crime.min_level, crime.name);
+  if (!lvl.ok) return { ok: false, message: lvl.message };
   if (player.bravery < crime.bravery_cost) {
     return { ok: false, message: 'Not enough Bravery. Try CE lounge vow shot.' };
   }

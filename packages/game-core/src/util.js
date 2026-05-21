@@ -14,6 +14,19 @@ export function gradeName(level) {
   return 'Grade 4';
 }
 
+/** Clear level-gate feedback for Discord and web. */
+export function requireLevel(player, requiredLevel, featureName) {
+  if (player.level >= requiredLevel) return { ok: true };
+  const gap = requiredLevel - player.level;
+  return {
+    ok: false,
+    message:
+      `**${featureName}** needs **Level ${requiredLevel}** (${gradeName(requiredLevel)}). ` +
+      `You are **Lv.${player.level}** (${gradeName(player.level)}) — **${gap}** more level(s) to go. ` +
+      `Train with \`/train\`, run missions with \`/crime\`, or \`/work\` for XP.`
+  };
+}
+
 export function nowIso() {
   return new Date().toISOString();
 }

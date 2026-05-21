@@ -138,6 +138,14 @@ function seedPhase4(db) {
     `INSERT OR IGNORE INTO item_definitions (id, name, description, shop_price, item_type, effects_json) VALUES (?, ?, ?, ?, ?, ?)`
   );
   for (const r of extraItems) insItem.run(...r);
+  insItem.run(
+    'prison_key',
+    'Prison Realm Key',
+    'Escape jail instantly',
+    12000,
+    'consumable',
+    '{"jailClear":true}'
+  );
 }
 
 function seedWorld(db) {
@@ -148,7 +156,8 @@ function seedWorld(db) {
     ['rice_bundle', 'Cursed Rice Bundle', 'Lounge currency x10', 200, 'material', '{"rice":10}'],
     ['iron_ore', 'Cursed Iron', 'Forging material', 1500, 'material', '{"forge":true}'],
     ['spirit_core', 'Spirit Core', 'Forging material', 5000, 'material', '{"forge":true}'],
-    ['grab_bag', 'Curse Capsule', 'Mystery loot', 50000, 'consumable', '{"grabBag":true}']
+    ['grab_bag', 'Curse Capsule', 'Mystery loot', 50000, 'consumable', '{"grabBag":true}'],
+    ['prison_key', 'Prison Realm Key', 'Escape jail instantly', 12000, 'consumable', '{"jailClear":true}']
   ];
   const insItem = db.prepare(
     `INSERT OR IGNORE INTO item_definitions (id, name, description, shop_price, item_type, effects_json)

@@ -1,7 +1,7 @@
 import { getDb } from './db.js';
 import balance from './balance.json' with { type: 'json' };
 import { getOrCreatePlayer } from './player.js';
-import { applyLevelUps, audit, isBlocked } from './util.js';
+import { applyLevelUps, audit, isBlocked, requireLevel } from './util.js';
 
 export function listCompanies() {
   return getDb().prepare('SELECT * FROM company_definitions ORDER BY min_level').all();
@@ -12,7 +12,8 @@ export function joinCompany(discordId, username, companyId) {
   const db = getDb();
   const co = db.prepare('SELECT * FROM company_definitions WHERE id = ?').get(companyId);
   if (!co) return { ok: false, message: 'Companies: jujutsu_ops, cursed_logistics, shibuya_response, vault_security' };
-  if (player.level < co.min_level) return { ok: false, message: `Requires level ${co.min_level}.` };
+  const lvl = requireLevel(player, co.min_level, co.name);
+  if (!lvl.ok) return { ok: false, message: lvl.message };
   db.prepare('UPDATE players SET company_id = ? WHERE id = ?').run(companyId, player.id);
   return {
     ok: true,

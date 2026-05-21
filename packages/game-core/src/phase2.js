@@ -1,6 +1,6 @@
 import { getDb } from './db.js';
 import { getOrCreatePlayer, addItem, removeItem } from './player.js';
-import { audit } from './util.js';
+import { audit, requireLevel } from './util.js';
 import { forgeRecipe } from './recipes.js';
 
 export function listEducation() {
@@ -14,7 +14,8 @@ export function enrollEducation(discordId, username, courseId) {
   if (!course) return { ok: false, message: 'Unknown course.' };
   const edu = JSON.parse(player.education_json || '[]');
   if (edu.includes(courseId)) return { ok: false, message: 'Already enrolled.' };
-  if (player.level < course.min_level) return { ok: false, message: `Requires level ${course.min_level}.` };
+  const lvl = requireLevel(player, course.min_level, course.name);
+  if (!lvl.ok) return { ok: false, message: lvl.message };
   if (player.coins < course.cost) return { ok: false, message: `Costs ${course.cost} coins.` };
   edu.push(courseId);
   db.prepare('UPDATE players SET coins = coins - ?, education_json = ? WHERE id = ?').run(

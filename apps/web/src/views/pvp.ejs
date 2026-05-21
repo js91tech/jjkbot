@@ -1,19 +1,28 @@
 <%- include('partials/head', { loggedIn: true, title: 'PvP' }) %>
-<% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+<% if (flash) { %>
+<div class="flash-wrap <%= flashOk ? '' : 'error' %>">
+  <% if (flashGif) { %><img class="flash-gif" src="<%= flashGif %>" alt="PvP" loading="lazy" /><% } %>
+  <div class="flash-text"><%= flash %></div>
+</div>
+<% } %>
 <h1>PvP — Duel, Mug, Rob</h1>
+<p class="stat">Same rules as Discord <code>/attack</code> <code>/mug</code> <code>/rob</code> <code>/bust</code></p>
 <% players.forEach(function(p) { %>
   <div class="panel">
-    <strong><%= p.username %></strong> — Lv.<%= p.level %> (<%= p.coins.toLocaleString() %> coins on hand)
-    <form method="post" action="/pvp" style="margin-top:0.5rem">
-      <input type="hidden" name="target" value="<%= p.discord_id %>" />
-      <button name="action" value="attack">Attack</button>
-      <button name="action" value="mug">Mug</button>
-      <button name="action" value="rob">Rob</button>
-    </form>
-    <form method="post" action="/bust" style="margin-top:0.5rem">
-      <input type="hidden" name="target" value="<%= p.discord_id %>" />
-      <button>Bust from Prison Realm</button>
-    </form>
+    <strong><%= p.username %></strong> — Lv.<%= p.level %> · <%= p.coins.toLocaleString() %>c on hand
+    <div class="action-card" style="margin-top:0.75rem">
+      <form method="post" action="/pvp">
+        <input type="hidden" name="target" value="<%= p.discord_id %>" />
+        <button name="action" value="attack">Attack</button>
+        <button name="action" value="mug" class="secondary">Mug</button>
+        <button name="action" value="rob" class="danger">Rob</button>
+      </form>
+      <form method="post" action="/bust" style="margin-top:0.5rem">
+        <input type="hidden" name="target" value="<%= p.discord_id %>" />
+        <button class="secondary">Bust from Prison</button>
+      </form>
+    </div>
   </div>
 <% }); %>
+<p><a href="/dashboard">← Dashboard</a></p>
 <%- include('partials/foot') %>
