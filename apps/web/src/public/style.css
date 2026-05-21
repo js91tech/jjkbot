@@ -364,6 +364,42 @@ main > p:last-child {
   margin-top: 2rem;
 }
 
+.flash {
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.game-tooltip {
+  position: fixed;
+  z-index: 10000;
+  max-width: min(320px, 90vw);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text);
+  background: rgba(15, 12, 28, 0.96);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow), 0 0 24px rgba(124, 58, 237, 0.2);
+  pointer-events: none;
+}
+
+.stat-card[data-tip-bound],
+.action-card h3[data-tip-bound],
+nav a[data-tip-bound] {
+  cursor: help;
+}
+
+button[data-tip-bound],
+input[data-tip-bound],
+select[data-tip-bound] {
+  cursor: help;
+}
+
 @media (max-width: 600px) {
   .flash-wrap {
     flex-direction: column;
