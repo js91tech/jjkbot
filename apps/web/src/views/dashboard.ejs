@@ -35,8 +35,9 @@
       <h1 class="profile-name"><%= player.username %> <span class="grade-tag"><%= player.grade %></span></h1>
       <p class="profile-meta">Level <%= player.level %> · <%= player.world_id %> · Gym: <%= player.gym_id %></p>
       <div class="profile-actions">
-        <a href="/play/2d" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Open top-down 2D mode (same character as bot and web). Start API + 2D client locally, or set GAME_2D_URL on Railway.">Play 2D mode</a>
-        <span class="profile-sync">Same save as bot · <code>DATABASE_PATH</code></span>
+        <a href="<%= launch2dUrl %>" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Opens the Phaser client with your Discord ID. Requires API (port 3848) and 2D dev server (port 5173) when using localhost.">Play 2D mode</a>
+        <a href="/play/2d" class="btn-wood btn-launch-alt" data-tip="Launcher page with manual link if the button above does nothing.">2D launcher</a>
+        <span class="profile-sync"><%= launch2dHint %></span>
       </div>
     </div>
   </section>

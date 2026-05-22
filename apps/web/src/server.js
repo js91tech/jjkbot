@@ -1,10 +1,14 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import session from 'express-session';
 import { GameService } from '@jjk/game-core';
 import { gifForAction, HERO_IMAGE } from './action-media.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '../../..');
+dotenv.config({ path: path.join(root, '.env') });
 
 function dashRedirect(res, r, action) {
   const params = new URLSearchParams({
@@ -15,8 +19,6 @@ function dashRedirect(res, r, action) {
   res.redirect(`/dashboard?${params.toString()}`);
 }
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, '../../..');
 process.env.DATABASE_PATH = process.env.DATABASE_PATH || path.join(root, 'data/jjk.db');
 
 const app = express();
@@ -43,6 +45,29 @@ const oauthRedirectUri = `${baseUrl}/oauth/callback`;
 function getGame2dUrl() {
   const raw = process.env.GAME_2D_URL || 'http://localhost:5173';
   return raw.replace(/\/$/, '');
+}
+
+function buildLaunch2dUrl(session) {
+  const base = getGame2dUrl();
+  const params = new URLSearchParams({
+    discord_id: session.discordId,
+    username: session.username || 'Sorcerer'
+  });
+  const joiner = base.includes('?') ? '&' : '?';
+  return `${base}${joiner}${params.toString()}`;
+}
+
+function getLaunch2dHint() {
+  const gameUrl = getGame2dUrl();
+  const isLocalGame = /localhost|127\.0\.0\.1/i.test(gameUrl);
+  const isHttpsWeb = baseUrl.startsWith('https');
+  if (isHttpsWeb && isLocalGame) {
+    return 'Set GAME_2D_URL on the web service to your hosted HTTPS 2D client (not localhost).';
+  }
+  if (isLocalGame) {
+    return 'Local: run npm run start:api (jjkbot) and npm run dev (jjk-game-2d), then click Play 2D.';
+  }
+  return 'Opens the top-down client in a new tab with your logged-in character.';
 }
 
 app.set('view engine', 'ejs');
@@ -143,19 +168,24 @@ app.get('/dashboard', requireAuth, (req, res) => {
     flashGif: gifForAction(action, flashOk),
     flashOk,
     heroImage: HERO_IMAGE,
-    game2dUrl: getGame2dUrl()
+    game2dUrl: getGame2dUrl(),
+    launch2dUrl: buildLaunch2dUrl(req.session),
+    launch2dHint: getLaunch2dHint()
   });
 });
 
 /** Launch 2D client as the logged-in Discord user (query params + API dev auth). */
 app.get('/play/2d', requireAuth, (req, res) => {
-  const base = getGame2dUrl();
-  const params = new URLSearchParams({
-    discord_id: req.session.discordId,
-    username: req.session.username || 'Sorcerer'
+  const launch2dUrl = buildLaunch2dUrl(req.session);
+  if (req.query.go === '1') {
+    return res.redirect(launch2dUrl);
+  }
+  res.render('play-2d', {
+    launch2dUrl,
+    game2dUrl: getGame2dUrl(),
+    launch2dHint: getLaunch2dHint(),
+    apiHealthUrl: process.env.API_PUBLIC_URL || 'http://localhost:3848'
   });
-  const joiner = base.includes('?') ? '&' : '?';
-  res.redirect(`${base}${joiner}${params.toString()}`);
 });
 
 app.post('/train', requireAuth, (req, res) => {

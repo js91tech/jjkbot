@@ -1,0 +1,23 @@
+<%- include('partials/head', { loggedIn: true, title: 'Launch 2D', pageClass: 'page-jjk' }) %>
+<%- include('partials/jjk-shell-open') %>
+
+<article class="jjk-panel vine-panel" style="max-width:640px;margin:1rem auto">
+  <h1 class="page-title">Launch 2D mode</h1>
+  <p class="page-lead"><%= launch2dHint %></p>
+  <p class="stat">2D client: <code><%= game2dUrl %></code></p>
+  <p class="stat">API check: <code><%= apiHealthUrl %>/health</code></p>
+  <div class="profile-actions" style="margin-top:1rem">
+    <a href="<%= launch2dUrl %>" class="btn-launch-2d" target="_blank" rel="noopener noreferrer">Open 2D game</a>
+    <a href="/play/2d?go=1" class="btn-wood">Redirect in this tab</a>
+    <a href="/dashboard" class="btn-wood">← Dashboard</a>
+  </div>
+</article>
+
+<script>
+  setTimeout(function () {
+    window.open('<%= launch2dUrl %>', '_blank', 'noopener');
+  }, 300);
+</script>
+
+<%- include('partials/jjk-shell-close') %>
+<%- include('partials/foot') %>
