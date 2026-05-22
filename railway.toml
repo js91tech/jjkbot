@@ -1,8 +1,9 @@
-# Use on BOTH Railway services (same config file path: railway.toml).
+# Use on bot, web, and api Railway services (same railway.toml).
 # Set variable on each service:
 #   Web service → SERVICE=web
 #   Bot service → SERVICE=bot
-#   API service → SERVICE=api  (for 2D Activity client)
+#   API service → SERVICE=api  (2D Discord Activity — see docs/RAILWAY-2D-ACTIVITY.md)
+# 2D static client: separate repo jjk-game-2d (own railway.toml).
 # Or name services with "web" / "bot" in the name (auto-detected).
 
 [deploy]

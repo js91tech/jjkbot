@@ -254,6 +254,18 @@ body.page-dashboard main {
   margin-top: 0.75rem;
 }
 
+.profile-actions--2d {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.play-2d-primary {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #67e8f9;
+  line-height: 1.45;
+}
+
 .btn-launch-2d {
   display: inline-block;
   position: relative;

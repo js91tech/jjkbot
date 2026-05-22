@@ -62,12 +62,12 @@ function getLaunch2dHint() {
   const isLocalGame = /localhost|127\.0\.0\.1/i.test(gameUrl);
   const isHttpsWeb = baseUrl.startsWith('https');
   if (isHttpsWeb && isLocalGame) {
-    return 'Set GAME_2D_URL on the web service to your hosted HTTPS 2D client (not localhost).';
+    return 'Players: use Discord voice → Activities (rocket). Set GAME_2D_URL to your hosted 2D HTTPS URL.';
   }
   if (isLocalGame) {
-    return 'Local: run npm run start:api (jjkbot) and npm run dev (jjk-game-2d), then click Play 2D.';
+    return 'Players: Discord voice → Activities. Local dev only: API + npm run dev in jjk-game-2d.';
   }
-  return 'Opens the top-down client in a new tab with your logged-in character.';
+  return 'Everyone: join voice → Activities (rocket). Optional: open 2D in browser below.';
 }
 
 app.set('view engine', 'ejs');

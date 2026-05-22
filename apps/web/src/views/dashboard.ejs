@@ -34,9 +34,9 @@
     <div class="profile-inner">
       <h1 class="profile-name"><%= player.username %> <span class="grade-tag"><%= player.grade %></span></h1>
       <p class="profile-meta">Level <%= player.level %> · <%= player.world_id %> · Gym: <%= player.gym_id %></p>
-      <div class="profile-actions">
-        <a href="<%= launch2dUrl %>" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Opens the Phaser client with your Discord ID. Requires API (port 3848) and 2D dev server (port 5173) when using localhost.">Play 2D mode</a>
-        <a href="/play/2d" class="btn-wood btn-launch-alt" data-tip="Launcher page with manual link if the button above does nothing.">2D launcher</a>
+      <div class="profile-actions profile-actions--2d">
+        <p class="play-2d-primary"><strong>Play in Discord:</strong> join a voice channel → <strong>Activities</strong> (rocket) → JJK Sorcerer</p>
+        <a href="<%= launch2dUrl %>" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Optional browser link to the hosted 2D client. Main path is Discord Activity in a voice channel.">Open 2D in browser</a>
         <span class="profile-sync"><%= launch2dHint %></span>
       </div>
     </div>

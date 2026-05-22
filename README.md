@@ -98,15 +98,22 @@ Same image for both services; `SERVICE=web` or `SERVICE=bot` selects the process
 - `apps/web` — dashboard, gym, missions, PvP, bank, shop, wheel
 - `apps/api` — REST API for **jjk-game-2d** (Discord Activity / Phaser client)
 
-### 2D client (separate repo)
+### 2D Discord Activity (separate repo)
 
-Top-down game: **[jjk-game-2d](https://github.com/js91tech/jjk-game-2d)** (create/push your copy).  
-Runs against `apps/api` — same save as bot when `DATABASE_PATH` is shared.
+Top-down game: **[jjk-game-2d](https://github.com/js91tech/jjk-game-2d)**.
 
-```bash
-npm run start:api          # port 3848
-ALLOW_DEV_AUTH=true      # local Phaser dev
-```
+**For every player:** deploy API + static 2D on Railway, enable Discord **Activities** — players launch from a **voice channel** (rocket icon). No localhost.
+
+**Setup guide:** [docs/RAILWAY-2D-ACTIVITY.md](docs/RAILWAY-2D-ACTIVITY.md)
+
+| Railway service | `SERVICE` | Role |
+|-----------------|-----------|------|
+| Bot | `bot` | Slash commands |
+| Web | `web` | Dashboard |
+| API | `api` | 2D + Activity auth |
+| jjk-game-2d repo | — | Static Phaser client |
+
+Local dev only: `npm run start:api` + `ALLOW_DEV_AUTH=true` in jjk-game-2d.
 
 **Bot and web are synced** when both use the same `DATABASE_PATH` (e.g. `/data/jjk.db` on a shared Railway volume). Same Discord account = same character on bot and site.
 
