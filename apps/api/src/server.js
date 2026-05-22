@@ -101,6 +101,34 @@ app.get('/v1/players', requireAuth(async (req, res) => {
 }));
 
 /** Discord Activity: exchange authorize code for access token. */
+async function exchangeActivityOAuthCode(code, clientId, clientSecret) {
+  const attempts = [
+    { redirect_uri: 'https://127.0.0.1' },
+    { redirect_uri: 'http://127.0.0.1' },
+    { redirect_uri: 'http://127.0.0.1/callback' },
+    {}
+  ];
+  let last = null;
+  for (const extra of attempts) {
+    const body = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'authorization_code',
+      code
+    });
+    if (extra.redirect_uri) body.set('redirect_uri', extra.redirect_uri);
+    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
+    const token = await tokenRes.json();
+    if (token.access_token) return token;
+    last = token;
+  }
+  return last;
+}
+
 app.post('/v1/auth/code', async (req, res) => {
   const { code } = req.body || {};
   if (!code) return res.status(400).json({ ok: false, message: 'code required' });
@@ -109,18 +137,9 @@ app.post('/v1/auth/code', async (req, res) => {
   if (!clientId || !clientSecret) {
     return res.status(500).json({ ok: false, message: 'DISCORD_CLIENT_ID/SECRET not set on API service' });
   }
-  const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      grant_type: 'authorization_code',
-      code
-    })
-  });
-  const token = await tokenRes.json();
+  const token = await exchangeActivityOAuthCode(code, clientId, clientSecret);
   if (!token.access_token) {
+    console.error('Activity OAuth exchange failed:', token);
     return res.status(401).json({ ok: false, message: 'OAuth exchange failed', detail: token });
   }
   const fakeReq = { headers: { authorization: `Bearer ${token.access_token}` } };
