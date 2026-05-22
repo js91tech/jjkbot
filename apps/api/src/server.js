@@ -13,10 +13,14 @@ process.env.DATABASE_PATH = process.env.DATABASE_PATH || path.join(root, 'data/j
 const app = express();
 const port = Number(process.env.PORT || process.env.API_PORT) || 3848;
 
-const activityOrigins = (process.env.ACTIVITY_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173')
+const devOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const activityOrigins = (process.env.ACTIVITY_ORIGINS || '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
+if (activityOrigins.length === 0 && process.env.ALLOW_DEV_AUTH === 'true') {
+  activityOrigins.push(...devOrigins);
+}
 
 app.use(
   cors({
@@ -143,7 +147,10 @@ app.post('/v1/auth/token', async (req, res) => {
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`JJK Game API on 0.0.0.0:${port}`);
-  console.log(`CORS origins: ${activityOrigins.join(', ')}`);
+  console.log(`CORS origins: ${activityOrigins.length ? activityOrigins.join(', ') : '(none — set ACTIVITY_ORIGINS)'}`);
   console.log(`DATABASE_PATH=${process.env.DATABASE_PATH}`);
+  if (!activityOrigins.length && process.env.ALLOW_DEV_AUTH !== 'true') {
+    console.warn('ACTIVITY_ORIGINS is empty. Set it to your hosted jjk-game-2d HTTPS URL (see docs/RAILWAY-2D-ACTIVITY.md).');
+  }
   if (process.env.ALLOW_DEV_AUTH === 'true') console.log('DEV AUTH: X-Discord-Id / X-Discord-Username headers enabled');
 });

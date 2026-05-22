@@ -9,6 +9,7 @@ COPY package.json ./
 COPY packages/game-core/package.json ./packages/game-core/
 COPY apps/discord-bot/package.json ./apps/discord-bot/
 COPY apps/web/package.json ./apps/web/
+COPY apps/api/package.json ./apps/api/
 
 RUN npm install --omit=dev
 

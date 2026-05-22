@@ -36,7 +36,9 @@
       <p class="profile-meta">Level <%= player.level %> · <%= player.world_id %> · Gym: <%= player.gym_id %></p>
       <div class="profile-actions profile-actions--2d">
         <p class="play-2d-primary"><strong>Play in Discord:</strong> join a voice channel → <strong>Activities</strong> (rocket) → JJK Sorcerer</p>
+        <% if (launch2dUrl) { %>
         <a href="<%= launch2dUrl %>" class="btn-launch-2d" target="_blank" rel="noopener noreferrer" data-tip="Optional browser link to the hosted 2D client. Main path is Discord Activity in a voice channel.">Open 2D in browser</a>
+        <% } %>
         <span class="profile-sync"><%= launch2dHint %></span>
       </div>
     </div>

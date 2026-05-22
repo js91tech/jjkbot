@@ -41,14 +41,16 @@ function getBaseUrl() {
 const baseUrl = getBaseUrl();
 const oauthRedirectUri = `${baseUrl}/oauth/callback`;
 
-/** Hosted Phaser client (jjk-game-2d). Default: local Vite dev server. */
+/** Hosted Phaser client (jjk-game-2d). Unset on Railway = Activity-only (no browser link). */
 function getGame2dUrl() {
-  const raw = process.env.GAME_2D_URL || 'http://localhost:5173';
+  const raw = process.env.GAME_2D_URL;
+  if (!raw) return null;
   return raw.replace(/\/$/, '');
 }
 
 function buildLaunch2dUrl(session) {
   const base = getGame2dUrl();
+  if (!base) return null;
   const params = new URLSearchParams({
     discord_id: session.discordId,
     username: session.username || 'Sorcerer'
@@ -58,16 +60,10 @@ function buildLaunch2dUrl(session) {
 }
 
 function getLaunch2dHint() {
-  const gameUrl = getGame2dUrl();
-  const isLocalGame = /localhost|127\.0\.0\.1/i.test(gameUrl);
-  const isHttpsWeb = baseUrl.startsWith('https');
-  if (isHttpsWeb && isLocalGame) {
-    return 'Players: use Discord voice → Activities (rocket). Set GAME_2D_URL to your hosted 2D HTTPS URL.';
+  if (!getGame2dUrl()) {
+    return 'Play in Discord: join a voice channel → Activities (rocket). Optional browser link: set GAME_2D_URL on the web service.';
   }
-  if (isLocalGame) {
-    return 'Players: Discord voice → Activities. Local dev only: API + npm run dev in jjk-game-2d.';
-  }
-  return 'Everyone: join voice → Activities (rocket). Optional: open 2D in browser below.';
+  return 'Primary: voice channel → Activities (rocket). Browser link below is optional.';
 }
 
 app.set('view engine', 'ejs');
@@ -177,14 +173,13 @@ app.get('/dashboard', requireAuth, (req, res) => {
 /** Launch 2D client as the logged-in Discord user (query params + API dev auth). */
 app.get('/play/2d', requireAuth, (req, res) => {
   const launch2dUrl = buildLaunch2dUrl(req.session);
-  if (req.query.go === '1') {
+  if (req.query.go === '1' && launch2dUrl) {
     return res.redirect(launch2dUrl);
   }
   res.render('play-2d', {
     launch2dUrl,
     game2dUrl: getGame2dUrl(),
-    launch2dHint: getLaunch2dHint(),
-    apiHealthUrl: process.env.API_PUBLIC_URL || 'http://localhost:3848'
+    launch2dHint: getLaunch2dHint()
   });
 });
 

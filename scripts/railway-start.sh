@@ -8,8 +8,13 @@ npm run db:init -w @jjk/game-core || true
 
 if [ "$SERVICE" = "bot" ]; then
   echo "Starting Discord bot..."
-  exec npm run start:bot -w @jjk/discord-bot
+  exec npm run start -w @jjk/discord-bot
+fi
+
+if [ "$SERVICE" = "api" ]; then
+  echo "Starting game API..."
+  exec npm run start -w @jjk/api
 fi
 
 echo "Starting web UI..."
-exec npm run start:web -w @jjk/web
+exec npm run start -w @jjk/web

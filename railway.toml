@@ -3,7 +3,7 @@
 #   Web service → SERVICE=web
 #   Bot service → SERVICE=bot
 #   API service → SERVICE=api  (2D Discord Activity — see docs/RAILWAY-2D-ACTIVITY.md)
-# 2D static client: separate repo jjk-game-2d (own railway.toml).
+# 2D Activity: SERVICE=api + jjk-game-2d repo — docs/RAILWAY-2D-ACTIVITY.md
 # Or name services with "web" / "bot" in the name (auto-detected).
 
 [deploy]
