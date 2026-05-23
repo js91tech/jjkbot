@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Client, GatewayIntentBits, Events, InteractionResponseType } from 'discord.js';
+import { Client, GatewayIntentBits, Events, MessageFlags } from 'discord.js';
 import { GameService } from '@jjk/game-core';
 import { handleCommand } from './commands.js';
 import { registerSlashCommands } from './register-slash.js';
@@ -50,22 +50,43 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   try {
     if (interaction.commandName === 'play2d') {
-      await interaction.reply({ type: InteractionResponseType.LaunchActivity });
+      if (typeof interaction.launchActivity !== 'function') {
+        await interaction.reply({
+          content:
+            '2D launch is not available on this bot build. Enable Activities in the Discord portal, then use Activities → Launch or update the bot deploy.',
+          flags: MessageFlags.Ephemeral
+        });
+        return;
+      }
+      try {
+        await interaction.launchActivity();
+      } catch (launchErr) {
+        console.error('launchActivity failed:', launchErr);
+        const hint =
+          launchErr?.code === 50035 || /activity/i.test(launchErr?.message || '')
+            ? 'Enable **Activities** + **URL Mappings** in the Discord Developer Portal (2D HTTPS URL).'
+            : launchErr?.message || 'Unknown error';
+        await interaction.reply({
+          content: `Could not launch 2D Activity: ${hint}`,
+          flags: MessageFlags.Ephemeral
+        });
+      }
       return;
     }
     const result = await handleCommand(interaction);
+    const flags = result.ephemeral ? MessageFlags.Ephemeral : undefined;
     if (result.embed) {
-      await interaction.reply({ embeds: [result.embed], ephemeral: result.ephemeral });
+      await interaction.reply({ embeds: [result.embed], flags });
     } else {
-      await interaction.reply({ content: result.content, ephemeral: result.ephemeral });
+      await interaction.reply({ content: result.content, flags });
     }
   } catch (err) {
-    console.error(err);
+    console.error('Command error:', interaction.commandName, err);
     const msg = err.message || 'Something went wrong.';
     if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ content: msg, ephemeral: true });
+      await interaction.followUp({ content: msg, flags: MessageFlags.Ephemeral });
     } else {
-      await interaction.reply({ content: msg, ephemeral: true });
+      await interaction.reply({ content: msg, flags: MessageFlags.Ephemeral });
     }
   }
 });

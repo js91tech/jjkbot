@@ -1,15 +1,24 @@
 import { GameService } from '@jjk/game-core';
 import { playerEmbed } from './embed.js';
 
+/** Prefer GameService message; avoid bogus "Done." from `msg || ok ? 'Done.'` precedence. */
+function formatResultMessage(result) {
+  if (result.message?.trim()) return result.message.trim();
+  if (result.ok === false) return 'That did not work.';
+  return 'Action completed.';
+}
+
 function reply(result, interaction, extra = {}) {
+  const text = formatResultMessage(result);
+  const ephemeral = result.ok === false;
   if (result.player) {
     return {
-      embed: playerEmbed(result.player, result.message || 'Updated'),
-      ephemeral: false,
+      embed: playerEmbed(result.player, text),
+      ephemeral,
       ...extra
     };
   }
-  return { content: result.message || result.ok ? 'Done.' : 'Failed.', ephemeral: !result.ok };
+  return { content: text, ephemeral, ...extra };
 }
 
 export async function handleCommand(interaction) {

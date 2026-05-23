@@ -53,6 +53,19 @@ Bot and web now share `@jjk/discord-bot-volume` automatically.
 
 ---
 
+## Will 2D use the same save as bot?
+
+**Not automatically.** `jjk-game-2d` only talks to **`jjk-api`**, which reads `jjk.db` from **whatever volume is on the api service** (`jjk-api-volume` today).
+
+| Setup | Bot + web | 2D game |
+|--------|-----------|---------|
+| `SERVICE=botweb` only | Same save on bot volume | Still **api** volume (can differ) |
+| **`SERVICE=stack`** on bot | Same save | Same save (api in same container) |
+
+For one save everywhere: use **Fix B** below and point `VITE_API_URL` at your stack’s API URL.
+
+---
+
 ## Fix B — Bot + web + API in **one** service (2D + one save)
 
 If you also want **2D and bot** on the same `jjk.db` without copying files:

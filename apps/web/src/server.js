@@ -25,15 +25,21 @@ const app = express();
 const port = Number(process.env.PORT || process.env.WEB_PORT) || 3847;
 
 /** Public URL for OAuth — must match Discord Developer Portal redirect exactly. */
+function normalizeHttpsUrl(raw) {
+  const trimmed = (raw || '').trim().replace(/\/$/, '');
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 function getBaseUrl() {
-  if (process.env.WEB_BASE_URL) {
-    return process.env.WEB_BASE_URL.replace(/\/$/, '');
-  }
+  const fromEnv = normalizeHttpsUrl(process.env.WEB_BASE_URL);
+  if (fromEnv) return fromEnv;
   if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    return `https://${process.env.RAILWAY_PUBLIC_DOMAIN.replace(/\/$/, '')}`;
+    return normalizeHttpsUrl(process.env.RAILWAY_PUBLIC_DOMAIN);
   }
   if (process.env.RAILWAY_STATIC_URL) {
-    return process.env.RAILWAY_STATIC_URL.replace(/\/$/, '');
+    return normalizeHttpsUrl(process.env.RAILWAY_STATIC_URL);
   }
   return `http://localhost:${port}`;
 }
