@@ -7,13 +7,44 @@ import { SCHEMA_SQL } from './schema.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let dbInstance = null;
+let bootLogged = false;
 
 export function getDbPath() {
   return process.env.DATABASE_PATH || path.resolve(__dirname, '../../../data/jjk.db');
 }
 
+/** Log once at startup — compare bot vs web logs; paths/sizes must match for shared saves. */
+export function logDatabaseBoot(service = process.env.SERVICE || 'app') {
+  if (bootLogged) return;
+  bootLogged = true;
+  const dbPath = path.resolve(getDbPath());
+  const dataDir = '/data';
+  const onRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_SERVICE_NAME);
+  let size = 0;
+  let exists = false;
+  try {
+    exists = fs.existsSync(dbPath);
+    if (exists) size = fs.statSync(dbPath).size;
+  } catch {
+    /* ignore */
+  }
+  console.log(`[jjk-db] service=${service} path=${dbPath} exists=${exists} size=${size}`);
+  if (onRailway) {
+    const dataMounted = fs.existsSync(dataDir);
+    console.log(`[jjk-db] /data mounted=${dataMounted}`);
+    if (!dataMounted) {
+      console.warn(
+        '[jjk-db] WARNING: No /data volume — bot/web/api will each use separate ephemeral saves. Attach ONE shared volume at /data on every service.'
+      );
+    } else if (!dbPath.startsWith(`${dataDir}${path.sep}`)) {
+      console.warn(`[jjk-db] WARNING: DATABASE_PATH should be /data/jjk.db on Railway (got ${dbPath})`);
+    }
+  }
+}
+
 export function getDb() {
   if (!dbInstance) {
+    logDatabaseBoot();
     const dbPath = getDbPath();
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
     dbInstance = new Database(dbPath);

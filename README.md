@@ -22,7 +22,9 @@ Open http://localhost:3847 and log in with Discord.
 
 ## Deploy on Railway (GitHub: js91tech/jjkbot)
 
-Use **two or three services** from this repo (bot, web, optional **api** for 2D Activity), each with a **volume** at `/data`.
+Use **two or three services** from this repo (bot, web, optional **api** for 2D Activity).
+
+**One shared save:** attach the **same Railway volume** to bot, web, and api at mount `/data` with `DATABASE_PATH=/data/jjk.db`. Separate volumes = separate characters. See **[docs/RAILWAY-SHARED-DATABASE.md](docs/RAILWAY-SHARED-DATABASE.md)**.
 
 ### Railway start command (all jjkbot services)
 
@@ -44,7 +46,7 @@ Healthcheck: `/health`. Logs: `Railway start: web|bot|api`.
 | Setting | Value |
 |--------|--------|
 | `SERVICE` | `web` |
-| Volume | `/data` |
+| Volume | **Same** shared volume as bot/api → `/data` |
 | `DATABASE_PATH` | `/data/jjk.db` |
 | `WEB_BASE_URL` | `https://<your-web-service>.up.railway.app` |
 | `SESSION_SECRET` | long random string |
@@ -60,7 +62,7 @@ Discord OAuth redirect: `https://<web-url>/oauth/callback`
 | Setting | Value |
 |--------|--------|
 | `SERVICE` | `bot` |
-| Volume | `/data` (same DB as web + api) |
+| Volume | **Same** shared volume as web/api → `/data` |
 | `DATABASE_PATH` | `/data/jjk.db` |
 | `DISCORD_TOKEN` | bot token |
 | `DISCORD_CLIENT_ID` | app id (for slash register) |

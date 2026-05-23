@@ -129,7 +129,8 @@ Copy 2D public HTTPS URL → Discord **URL Mappings** + API `ACTIVITY_ORIGINS`.
 | Activity shows slash commands, not game | Enable **Embedded App** + URL Mapping to 2D URL; redeploy 2D with `frame-ancestors` in `vite.config.js` |
 | Activity blank / auth error | `ACTIVITY_ORIGINS` must exactly match 2D URL (scheme + host) |
 | CORS in console | Add 2D origin to `ACTIVITY_ORIGINS` on API |
-| Wrong/empty character | API must use same `/data/jjk.db` volume as bot |
+| Wrong/empty character | API must use **same shared volume** as bot/web — [RAILWAY-SHARED-DATABASE.md](RAILWAY-SHARED-DATABASE.md) |
+| Bot and web different saves | Two volumes — merge to one volume at `/data` (link above) |
 | `Failed to fetch` in Activity | API down or wrong `VITE_API_URL` — rebuild 2D after fixing |
 | Build still hits localhost | Set `VITE_*` on 2D service and **redeploy** (baked into `dist/`) |
 
