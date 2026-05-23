@@ -20,6 +20,25 @@ You are **not** doing anything wrong — the platform works this way.
 
 ---
 
+## Stuck on “Deploying” in Railway
+
+Your **runtime logs can look healthy** (bot logged in, web on port 8080) while the dashboard still says **Deploying**. Railway is waiting for its **health check** on `PORT` + `/health` (see `railway.toml`).
+
+| Service | What must answer `/health` on `PORT` |
+|---------|--------------------------------------|
+| `SERVICE=botweb` or `web` | Web app (`apps/web`) — should pass within ~30s |
+| `SERVICE=api` | API (`/health` JSON) |
+| `SERVICE=bot` only | No web — use latest `railway-service-start.js` (adds a tiny `/health` listener) **or** disable health check in Railway → Settings |
+| **jjk-game-2d** (separate repo) | Vite preview has **no** `/health` — in Railway set **Healthcheck Path** to `/` or **None** |
+
+Other causes:
+
+- **Queued deploys** — cancel old deployments; only one active deploy per service.
+- **Build vs deploy** — “Building” is npm/Docker; “Deploying” is after the container starts.
+- **Wrong service** — remove duplicate `@jjk/web` if you use `SERVICE=botweb` on the bot service.
+
+---
+
 ## Fix A — Bot + web in **one** service (recommended)
 
 Run **Discord bot and website together** on the service that already has the save you want (usually **bot**).

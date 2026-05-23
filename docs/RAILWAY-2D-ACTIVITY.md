@@ -135,6 +135,7 @@ Copy 2D public HTTPS URL → Discord **URL Mappings** + API `ACTIVITY_ORIGINS`.
 | `Failed to fetch` in Activity | Add URL Mapping `/api` → api host; keep **jjk-api** online; rebuild 2D after code update |
 | `Unauthorized. Log in with Discord` | **jjk-api** needs `DISCORD_CLIENT_SECRET`; OAuth redirect `http://127.0.0.1/callback`; same app id on API + `VITE_DISCORD_CLIENT_ID`; redeploy 2D |
 | Build still hits localhost | Set `VITE_*` on 2D service and **redeploy** (baked into `dist/`) |
+| 2D stuck **Deploying** forever | Railway healthcheck `/health` fails on static Vite — set health path to **`/`** or disable healthcheck |
 
 ---
 

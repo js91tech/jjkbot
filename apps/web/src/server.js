@@ -86,7 +86,7 @@ app.use(
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/health', (_req, res) => {
-  res.status(200).send('ok');
+  res.status(200).json({ ok: true, service: 'web' });
 });
 
 const stopTicks = GameService.startScheduler();

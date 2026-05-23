@@ -2,7 +2,25 @@
  * Railway: one repo, multiple deploy modes via SERVICE.
  * Railway cannot attach one volume to multiple services — use SERVICE=botweb or stack.
  */
+import http from 'http';
 import { spawn } from 'child_process';
+
+/** Bot-only has no HTTP app; Railway healthcheckPath=/health needs a listener on PORT. */
+function startBotHealthServer() {
+  const port = Number(process.env.PORT) || 3847;
+  const server = http.createServer((req, res) => {
+    if (req.url === '/health' || req.url === '/') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, service: 'bot' }));
+      return;
+    }
+    res.writeHead(404).end();
+  });
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`bot: healthcheck on 0.0.0.0:${port}/health (Railway deploy probe)`);
+  });
+  return server;
+}
 
 function detectService() {
   const explicit = (process.env.SERVICE || '').toLowerCase();
@@ -72,6 +90,7 @@ if (service === 'botweb') {
 } else {
   const workspace =
     service === 'web' ? '@jjk/web' : service === 'api' ? '@jjk/api' : '@jjk/discord-bot';
+  if (service === 'bot') startBotHealthServer();
   runWorkspace(workspace, service).catch((err) => {
     console.error(err);
     process.exit(1);
