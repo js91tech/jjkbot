@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import { GameService } from '@jjk/game-core';
 import { requireAuth, resolveDiscordUser } from './auth.js';
+import { signActivitySession } from './activitySession.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '../../..');
@@ -163,9 +164,11 @@ app.post('/v1/auth/code', async (req, res) => {
   const user = await resolveDiscordUser(fakeReq);
   if (!user) return res.status(401).json({ ok: false, message: 'Could not load Discord user' });
   GameService.profile(user.id, user.username);
+  const session_token = signActivitySession(user.id, user.username);
   res.json({
     ok: true,
     access_token: token.access_token,
+    session_token,
     discordId: user.id,
     username: user.username
   });

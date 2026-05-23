@@ -40,7 +40,7 @@ Same application as your bot.
 | 2 | **URL Mappings** → Root URL = **2D HTTPS URL** (step 4), e.g. `https://jjk-game-2d-production.up.railway.app` (must be **Embedded App**, not “commands only”) |
 | 3 | **Application ID** → `DISCORD_CLIENT_ID` on API + `VITE_DISCORD_CLIENT_ID` on 2D build |
 | 4 | **OAuth2** → redirects: `http://127.0.0.1/callback` (Activity desktop — **required**), `https://127.0.0.1`, `https://<web>/oauth/callback` (dashboard) |
-| 5 | **URL Mappings** → add **second** mapping: prefix `/api` → target `jjk-api-production.up.railway.app` (no `https://`) — required so the Activity can reach your API through Discord’s proxy |
+| 5 | **URL Mappings** → add **second** mapping: prefix **`/api`** → target `jjk-api-production.up.railway.app` (no `https://`). The 2D client calls **`/api/v1/...`** (Discord proxy forwards to your API). |
 
 Tell players (any of these):
 

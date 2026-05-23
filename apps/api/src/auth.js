@@ -1,5 +1,16 @@
+import { verifyActivitySession } from './activitySession.js';
+
+function bearerToken(req) {
+  const auth = req.headers.authorization || '';
+  if (auth.startsWith('Bearer ')) return auth.slice(7);
+  const alt = req.headers['x-jjk-session'];
+  if (alt) return String(alt);
+  return null;
+}
+
 /**
  * Discord Bearer token auth for 2D Activity + dev headers.
+ * Activity sessions use signed `jjk.*` tokens from POST /v1/auth/code.
  */
 export async function resolveDiscordUser(req) {
   if (process.env.ALLOW_DEV_AUTH === 'true') {
@@ -8,9 +19,11 @@ export async function resolveDiscordUser(req) {
     if (devId) return { id: String(devId), username: String(devName) };
   }
 
-  const auth = req.headers.authorization || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  const token = bearerToken(req);
   if (!token) return null;
+
+  const sessionUser = verifyActivitySession(token);
+  if (sessionUser) return sessionUser;
 
   const res = await fetch('https://discord.com/api/users/@me', {
     headers: { Authorization: `Bearer ${token}` }
@@ -20,7 +33,6 @@ export async function resolveDiscordUser(req) {
   if (!user?.id) return null;
   return { id: user.id, username: user.username || 'Sorcerer' };
 }
-
 export function requireAuth(handler) {
   return async (req, res, next) => {
     try {
