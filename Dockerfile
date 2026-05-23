@@ -5,7 +5,7 @@ RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json package-lock.json ./
 COPY packages/game-core/package.json ./packages/game-core/
 COPY apps/discord-bot/package.json ./apps/discord-bot/
 COPY apps/web/package.json ./apps/web/

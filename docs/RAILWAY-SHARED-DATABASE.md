@@ -40,7 +40,7 @@ Run **Discord bot and website together** on the service that already has the sav
 
 3. **Redeploy** the bot service.
 
-4. **Stop or delete** the separate **`@jjk/web`** service (so you are not paying for a second empty save).
+4. **Remove** the separate **`@jjk/web`** service (see below — Railway has no “pause”, only remove).
 
 5. Open the **bot service URL** in a browser — that is your dashboard now.
 
@@ -111,6 +111,19 @@ Test: change coins on the site → `/profile` in Discord matches.
 2. Download `/data/jjk.db` from that volume (Railway volume UI / CLI).
 3. For other services you still run separately: upload that file to their volume (only if you must keep multiple services).
 4. With **Fix A**, you only need the bot volume.
+
+---
+
+## Remove the old `@jjk/web` service (not pause)
+
+Railway does not have a pause button. To stop paying for the extra web app:
+
+1. Project canvas → click **`@jjk/web`**
+2. **Settings** → scroll to **Danger** → **Remove service from project**  
+   (or ⋮ menu on the service → **Remove**)
+3. Confirm
+
+Your site lives on the **bot** URL when using `SERVICE=botweb`.
 
 ---
 

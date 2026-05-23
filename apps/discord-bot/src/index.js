@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Client, GatewayIntentBits, Events, MessageFlags } from 'discord.js';
+import discord from 'discord.js';
+const { Client, GatewayIntentBits, Events, MessageFlags, Routes, InteractionResponseType } = discord;
 import { GameService } from '@jjk/game-core';
 import { handleCommand } from './commands.js';
 import { registerSlashCommands } from './register-slash.js';
@@ -29,8 +30,20 @@ try {
 client.on('error', (err) => console.error('Discord client error:', err));
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 
+async function launchPlay2dActivity(interaction) {
+  if (typeof interaction.launchActivity === 'function') {
+    await interaction.launchActivity();
+    console.log('play2d: launchActivity OK');
+    return;
+  }
+  await interaction.client.rest.post(Routes.interactionCallback(interaction.id, interaction.token), {
+    body: { type: InteractionResponseType.LaunchActivity }
+  });
+  console.log('play2d: LaunchActivity via REST fallback');
+}
+
 client.once(Events.ClientReady, async (c) => {
-  console.log(`JJK-Bot logged in as ${c.user.tag}`);
+  console.log(`JJK-Bot logged in as ${c.user.tag} (discord.js ${discord.version})`);
   if (process.env.REGISTER_COMMANDS_ON_START !== 'false') {
     try {
       await registerSlashCommands();
@@ -50,26 +63,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   try {
     if (interaction.commandName === 'play2d') {
-      if (typeof interaction.launchActivity !== 'function') {
-        await interaction.reply({
-          content:
-            '2D launch is not available on this bot build. Enable Activities in the Discord portal, then use Activities → Launch or update the bot deploy.',
-          flags: MessageFlags.Ephemeral
-        });
-        return;
-      }
       try {
-        await interaction.launchActivity();
+        await launchPlay2dActivity(interaction);
       } catch (launchErr) {
-        console.error('launchActivity failed:', launchErr);
+        console.error('play2d failed:', launchErr?.raw ?? launchErr);
         const hint =
-          launchErr?.code === 50035 || /activity/i.test(launchErr?.message || '')
-            ? 'Enable **Activities** + **URL Mappings** in the Discord Developer Portal (2D HTTPS URL).'
+          launchErr?.code === 50035 || /activity|embedded|mapping/i.test(launchErr?.message || '')
+            ? 'Check Discord portal: Activities ON, URL Mapping → jjk-game-2d-production.up.railway.app (no https in mapping). Join a voice channel and try again.'
             : launchErr?.message || 'Unknown error';
-        await interaction.reply({
-          content: `Could not launch 2D Activity: ${hint}`,
-          flags: MessageFlags.Ephemeral
-        });
+        if (!interaction.replied && !interaction.deferred) {
+          await interaction.reply({
+            content: `Could not launch 2D: ${hint}`,
+            flags: MessageFlags.Ephemeral
+          });
+        }
       }
       return;
     }
