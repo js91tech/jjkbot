@@ -37,7 +37,7 @@ Same application as your bot.
 | Step | Action |
 |------|--------|
 | 1 | **Activities** → enable **Embedded App** |
-| 2 | **URL Mappings** → Root URL = **2D HTTPS URL** (step 4), e.g. `https://jjk-game-2d-production.up.railway.app` |
+| 2 | **URL Mappings** → Root URL = **2D HTTPS URL** (step 4), e.g. `https://jjk-game-2d-production.up.railway.app` (must be **Embedded App**, not “commands only”) |
 | 3 | **Application ID** → `DISCORD_CLIENT_ID` on API + `VITE_DISCORD_CLIENT_ID` on 2D build |
 | 4 | **OAuth2** → redirect `https://<web>/oauth/callback` (unchanged for dashboard) |
 
@@ -122,6 +122,7 @@ Copy 2D public HTTPS URL → Discord **URL Mappings** + API `ACTIVITY_ORIGINS`.
 
 | Symptom | Fix |
 |---------|-----|
+| Activity shows slash commands, not game | Enable **Embedded App** + URL Mapping to 2D URL; redeploy 2D with `frame-ancestors` in `vite.config.js` |
 | Activity blank / auth error | `ACTIVITY_ORIGINS` must exactly match 2D URL (scheme + host) |
 | CORS in console | Add 2D origin to `ACTIVITY_ORIGINS` on API |
 | Wrong/empty character | API must use same `/data/jjk.db` volume as bot |

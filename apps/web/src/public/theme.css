@@ -82,11 +82,17 @@ body.page-dashboard main {
 .dash-page {
   position: relative;
   z-index: 1;
+  min-height: 50vh;
+}
+
+.jjk-content {
+  position: relative;
+  z-index: 2;
 }
 
 .jjk-bg,
 .dash-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
@@ -95,7 +101,7 @@ body.page-dashboard main {
 
 .jjk-vignette,
 .dash-vignette {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
