@@ -110,21 +110,22 @@ app.get('/v1/players', requireAuth(async (req, res) => {
 
 /** Discord Activity: exchange authorize code for access token. */
 async function exchangeActivityOAuthCode(code, clientId, clientSecret) {
-  const attempts = [
-    { redirect_uri: 'https://127.0.0.1' },
-    { redirect_uri: 'http://127.0.0.1' },
-    { redirect_uri: 'http://127.0.0.1/callback' },
-    {}
+  // Discord Activities (desktop): register http://127.0.0.1/callback in Developer Portal → OAuth2
+  const redirectUris = [
+    'http://127.0.0.1/callback',
+    'https://127.0.0.1/callback',
+    'http://127.0.0.1',
+    'https://127.0.0.1'
   ];
   let last = null;
-  for (const extra of attempts) {
+  for (const redirect_uri of redirectUris) {
     const body = new URLSearchParams({
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
-      code
+      code,
+      redirect_uri
     });
-    if (extra.redirect_uri) body.set('redirect_uri', extra.redirect_uri);
     const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -147,8 +148,16 @@ app.post('/v1/auth/code', async (req, res) => {
   }
   const token = await exchangeActivityOAuthCode(code, clientId, clientSecret);
   if (!token.access_token) {
-    console.error('Activity OAuth exchange failed:', token);
-    return res.status(401).json({ ok: false, message: 'OAuth exchange failed', detail: token });
+    const hint =
+      token.error === 'invalid_grant'
+        ? 'Add http://127.0.0.1/callback to Discord OAuth2 redirects; verify DISCORD_CLIENT_SECRET on jjk-api'
+        : token.error || 'unknown';
+    console.error('Activity OAuth exchange failed:', hint, token);
+    return res.status(401).json({
+      ok: false,
+      message: `OAuth exchange failed: ${hint}`,
+      detail: token
+    });
   }
   const fakeReq = { headers: { authorization: `Bearer ${token.access_token}` } };
   const user = await resolveDiscordUser(fakeReq);

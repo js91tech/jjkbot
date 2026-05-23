@@ -39,7 +39,7 @@ Same application as your bot.
 | 1 | **Activities** → enable **Embedded App** |
 | 2 | **URL Mappings** → Root URL = **2D HTTPS URL** (step 4), e.g. `https://jjk-game-2d-production.up.railway.app` (must be **Embedded App**, not “commands only”) |
 | 3 | **Application ID** → `DISCORD_CLIENT_ID` on API + `VITE_DISCORD_CLIENT_ID` on 2D build |
-| 4 | **OAuth2** → redirect `https://<web>/oauth/callback` (unchanged for dashboard) |
+| 4 | **OAuth2** → redirects: `http://127.0.0.1/callback` (Activity desktop — **required**), `https://127.0.0.1`, `https://<web>/oauth/callback` (dashboard) |
 | 5 | **URL Mappings** → add **second** mapping: prefix `/api` → target `jjk-api-production.up.railway.app` (no `https://`) — required so the Activity can reach your API through Discord’s proxy |
 
 Tell players (any of these):
@@ -133,6 +133,7 @@ Copy 2D public HTTPS URL → Discord **URL Mappings** + API `ACTIVITY_ORIGINS`.
 | Wrong/empty character | API must use **same shared volume** as bot/web — [RAILWAY-SHARED-DATABASE.md](RAILWAY-SHARED-DATABASE.md) |
 | Bot and web different saves | Two volumes — merge to one volume at `/data` (link above) |
 | `Failed to fetch` in Activity | Add URL Mapping `/api` → api host; keep **jjk-api** online; rebuild 2D after code update |
+| `Unauthorized. Log in with Discord` | **jjk-api** needs `DISCORD_CLIENT_SECRET`; OAuth redirect `http://127.0.0.1/callback`; same app id on API + `VITE_DISCORD_CLIENT_ID`; redeploy 2D |
 | Build still hits localhost | Set `VITE_*` on 2D service and **redeploy** (baked into `dist/`) |
 
 ---
