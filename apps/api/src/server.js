@@ -22,11 +22,19 @@ if (activityOrigins.length === 0 && process.env.ALLOW_DEV_AUTH === 'true') {
   activityOrigins.push(...devOrigins);
 }
 
+function isAllowedCorsOrigin(origin) {
+  if (!origin) return true;
+  if (activityOrigins.includes(origin)) return true;
+  // Discord Activity iframe / proxy (direct browser calls during dev or misconfig)
+  if (/\.discordsays\.com$/i.test(origin)) return true;
+  if (/discord\.com$/i.test(origin)) return true;
+  return false;
+}
+
 app.use(
   cors({
     origin(origin, cb) {
-      if (!origin || activityOrigins.includes(origin)) return cb(null, true);
-      cb(null, false);
+      cb(null, isAllowedCorsOrigin(origin));
     },
     credentials: true
   })
