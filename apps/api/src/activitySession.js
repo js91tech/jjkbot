@@ -30,7 +30,11 @@ export function verifyActivitySession(token) {
   const sig = rest.slice(dot + 1);
   const expected = crypto.createHmac('sha256', sessionSecret()).update(payload).digest('base64url');
   if (sig.length !== expected.length) return null;
-  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+  try {
+    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+  } catch {
+    return null;
+  }
   try {
     const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
     if (!data?.id || !data.exp || Date.now() > data.exp) return null;

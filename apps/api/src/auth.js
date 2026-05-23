@@ -5,6 +5,7 @@ function bearerToken(req) {
   if (auth.startsWith('Bearer ')) return auth.slice(7);
   const alt = req.headers['x-jjk-session'];
   if (alt) return String(alt);
+  if (req.body?.session_token) return String(req.body.session_token);
   return null;
 }
 
@@ -38,6 +39,10 @@ export function requireAuth(handler) {
     try {
       const user = await resolveDiscordUser(req);
       if (!user) {
+        const hasToken = Boolean(bearerToken(req));
+        console.warn(
+          `[auth] 401 ${req.method} ${req.path} token=${hasToken ? 'present' : 'missing'}`
+        );
         return res.status(401).json({ ok: false, message: 'Unauthorized. Log in with Discord.' });
       }
       req.discordId = user.id;

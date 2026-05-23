@@ -133,7 +133,8 @@ Copy 2D public HTTPS URL → Discord **URL Mappings** + API `ACTIVITY_ORIGINS`.
 | Wrong/empty character | API must use **same shared volume** as bot/web — [RAILWAY-SHARED-DATABASE.md](RAILWAY-SHARED-DATABASE.md) |
 | Bot and web different saves | Two volumes — merge to one volume at `/data` (link above) |
 | `Failed to fetch` in Activity | Add URL Mapping `/api` → api host; keep **jjk-api** online; rebuild 2D after code update |
-| `Unauthorized. Log in with Discord` | **jjk-api** needs `DISCORD_CLIENT_SECRET`; OAuth redirect `http://127.0.0.1/callback`; same app id on API + `VITE_DISCORD_CLIENT_ID`; redeploy 2D |
+| `Unauthorized. Log in with Discord` | Redeploy **both** jjk-api + jjk-game-2d (latest); **jjk-api** `DISCORD_CLIENT_SECRET`; OAuth redirect `http://127.0.0.1/callback`; URL mapping `/api` → api host; check jjk-api logs for `[auth] 401` |
+| `[jjk-db] No /data volume` on **jjk-api** | Attach volume at `/data` on jjk-api (or use `SERVICE=stack` on bot) — separate from login, but saves won’t persist |
 | Build still hits localhost | Set `VITE_*` on 2D service and **redeploy** (baked into `dist/`) |
 | 2D stuck **Deploying** forever | Railway healthcheck `/health` fails on static Vite — set health path to **`/`** or disable healthcheck |
 

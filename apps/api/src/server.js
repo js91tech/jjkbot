@@ -54,17 +54,23 @@ function wrap(result) {
 
 app.get('/health', (_req, res) => res.json({ ok: true, service: 'jjk-api' }));
 
-/** Who am I (creates player if new). */
-app.get('/v1/me', requireAuth(async (req, res) => {
+async function handleMe(req, res) {
   const { player, status, inventory } = GameService.profile(req.discordId, req.discordUsername);
   const confinement = GameService.confinement(req.discordId, req.discordUsername);
   const equipped = GameService.equipped(player.id);
   res.json({ ok: true, player, status, inventory, confinement, equipped });
-}));
+}
 
-app.get('/v1/crimes', requireAuth(async (req, res) => {
+async function handleCrimes(req, res) {
   res.json({ ok: true, crimes: GameService.crimes(req.discordId, req.discordUsername) });
-}));
+}
+
+/** Who am I (creates player if new). POST accepts { session_token } for Discord Activity proxy. */
+app.get('/v1/me', requireAuth(handleMe));
+app.post('/v1/me', requireAuth(handleMe));
+
+app.get('/v1/crimes', requireAuth(handleCrimes));
+app.post('/v1/crimes', requireAuth(handleCrimes));
 
 app.post('/v1/train', requireAuth(async (req, res) => {
   const { stat = 'strength', sets = 1 } = req.body || {};
@@ -163,14 +169,21 @@ app.post('/v1/auth/code', async (req, res) => {
   const fakeReq = { headers: { authorization: `Bearer ${token.access_token}` } };
   const user = await resolveDiscordUser(fakeReq);
   if (!user) return res.status(401).json({ ok: false, message: 'Could not load Discord user' });
-  GameService.profile(user.id, user.username);
+  const { player, status, inventory } = GameService.profile(user.id, user.username);
+  const confinement = GameService.confinement(user.id, user.username);
+  const crimes = GameService.crimes(user.id, user.username);
   const session_token = signActivitySession(user.id, user.username);
   res.json({
     ok: true,
     access_token: token.access_token,
     session_token,
     discordId: user.id,
-    username: user.username
+    username: user.username,
+    player,
+    status,
+    inventory,
+    confinement,
+    crimes
   });
 });
 
