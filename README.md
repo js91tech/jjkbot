@@ -24,7 +24,7 @@ Open http://localhost:3847 and log in with Discord.
 
 Use **two or three services** from this repo (bot, web, optional **api** for 2D Activity).
 
-**One shared save:** attach the **same Railway volume** to bot, web, and api at mount `/data` with `DATABASE_PATH=/data/jjk.db`. Separate volumes = separate characters. See **[docs/RAILWAY-SHARED-DATABASE.md](docs/RAILWAY-SHARED-DATABASE.md)**.
+**One shared save:** Railway **cannot** mount one volume on multiple services. Use **`SERVICE=botweb`** on the bot service (bot + web in one container) or see **[docs/RAILWAY-SHARED-DATABASE.md](docs/RAILWAY-SHARED-DATABASE.md)**.
 
 ### Railway start command (all jjkbot services)
 

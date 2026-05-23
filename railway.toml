@@ -2,7 +2,8 @@
 # Set variable on each service:
 #   Web service → SERVICE=web
 #   Bot service → SERVICE=bot
-#   API service → SERVICE=api  (2D Discord Activity — see docs/RAILWAY-2D-ACTIVITY.md)
+#   API service → SERVICE=api  (2D — see docs/RAILWAY-2D-ACTIVITY.md)
+#   Bot+web one save → SERVICE=botweb  (see docs/RAILWAY-SHARED-DATABASE.md)
 # 2D Activity: SERVICE=api + jjk-game-2d repo — docs/RAILWAY-2D-ACTIVITY.md
 # Or name services with "web" / "bot" in the name (auto-detected).
 

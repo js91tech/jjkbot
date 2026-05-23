@@ -1,12 +1,12 @@
 /**
- * Railway: both services can share railway.toml + this start command.
- * Detects web vs bot from SERVICE env or RAILWAY_SERVICE_NAME.
+ * Railway: one repo, multiple deploy modes via SERVICE.
+ * Railway cannot attach one volume to multiple services — use SERVICE=botweb or stack.
  */
 import { spawn } from 'child_process';
 
 function detectService() {
   const explicit = (process.env.SERVICE || '').toLowerCase();
-  if (explicit === 'web' || explicit === 'bot' || explicit === 'api') return explicit;
+  if (['web', 'bot', 'api', 'botweb', 'stack'].includes(explicit)) return explicit;
 
   const name = (process.env.RAILWAY_SERVICE_NAME || '').toLowerCase();
   if (name.includes('api')) return 'api';
@@ -16,14 +16,64 @@ function detectService() {
   return 'bot';
 }
 
+function runWorkspace(workspace, label) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('npm', ['run', 'start', '-w', workspace], {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`${label} exited with code ${code}`));
+    });
+  });
+}
+
+function runMany(workspaces) {
+  const children = workspaces.map(({ workspace, label }) => {
+    console.log(`Starting ${label} (${workspace})…`);
+    const child = spawn('npm', ['run', 'start', '-w', workspace], {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+    child.on('exit', (code) => {
+      console.error(`${label} exited (${code ?? 1})`);
+      process.exit(code ?? 1);
+    });
+    return child;
+  });
+  process.on('SIGINT', () => children.forEach((c) => c.kill('SIGINT')));
+  process.on('SIGTERM', () => children.forEach((c) => c.kill('SIGTERM')));
+}
+
 const service = detectService();
-const workspace =
-  service === 'web' ? '@jjk/web' : service === 'api' ? '@jjk/api' : '@jjk/discord-bot';
-const args = ['run', 'start', '-w', workspace];
 
 console.log(
   `Railway start: ${service} (SERVICE=${process.env.SERVICE || '-'} RAILWAY_SERVICE_NAME=${process.env.RAILWAY_SERVICE_NAME || '-'})`
 );
 
-const child = spawn('npm', args, { stdio: 'inherit', shell: true, env: process.env });
-child.on('exit', (code) => process.exit(code ?? 1));
+if (service === 'botweb') {
+  console.log('botweb: Discord bot + web UI in one container (one volume / one jjk.db)');
+  runMany([
+    { workspace: '@jjk/discord-bot', label: 'bot' },
+    { workspace: '@jjk/web', label: 'web' }
+  ]);
+} else if (service === 'stack') {
+  console.log('stack: bot + web + API in one container (one volume; web uses PORT, API uses API_PORT)');
+  if (!process.env.API_PORT) process.env.API_PORT = '3848';
+  runMany([
+    { workspace: '@jjk/discord-bot', label: 'bot' },
+    { workspace: '@jjk/web', label: 'web' },
+    { workspace: '@jjk/api', label: 'api' }
+  ]);
+} else {
+  const workspace =
+    service === 'web' ? '@jjk/web' : service === 'api' ? '@jjk/api' : '@jjk/discord-bot';
+  runWorkspace(workspace, service).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

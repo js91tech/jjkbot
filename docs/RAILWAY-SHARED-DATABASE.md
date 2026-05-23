@@ -1,51 +1,106 @@
-# Railway: one save file for bot + web + API
+# Railway: one save file (bot + web + API)
 
-If `/profile` on the bot and your character on the **website** don’t match, bot and web are using **different** `jjk.db` files.
+If `/profile` on the bot and your **website** show different characters, they are using **different** `jjk.db` files.
 
-## Cause
+## Why (Railway limitation)
 
-Each Railway service got its **own volume** (e.g. `discord-bot-volume` and `web-volume`). Same mount path `/data`, but **different disks** → different saves.
+**Railway does not let one volume attach to multiple services.**
 
-## Fix (use ONE volume)
+Your canvas is correct:
 
-1. In your Railway project, pick **one** volume to keep (or create **one** new volume, e.g. `jjk-shared-data`).
-2. For **each** service — **bot**, **web**, **api**:
-   - Open the service → **Volumes**
-   - **Remove** any volume that is only attached to that one service (if Railway lets you swap)
-   - **Attach the same shared volume** with mount path: `/data`
-3. On **every** service, set variable:
+| Volume | Service |
+|--------|---------|
+| `@jjk/discord-bot-volume` | bot only |
+| `@jjk/web-volume` | web only |
+| `jjk-api-volume` | api only |
+
+Same mount path `/data` on each, but **three separate disks** → three saves.
+
+You are **not** doing anything wrong — the platform works this way.
+
+---
+
+## Fix A — Bot + web in **one** service (recommended)
+
+Run **Discord bot and website together** on the service that already has the save you want (usually **bot**).
+
+### Steps
+
+1. Open **`@jjk/discord-bot`** service → **Variables**:
    ```env
+   SERVICE=botweb
    DATABASE_PATH=/data/jjk.db
    ```
-4. **Redeploy** bot, then web, then api (order doesn’t matter much).
+   (Keep `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, `WEB_BASE_URL`, `SESSION_SECRET`, `DISCORD_CLIENT_SECRET`, etc.)
 
-## Verify in logs
+2. Set **`WEB_BASE_URL`** to this service’s public URL (the bot service domain), e.g.:
+   ```env
+   WEB_BASE_URL=https://your-bot-service.up.railway.app
+   ```
 
-After redeploy, open **Deploy logs** for bot and web. You should see lines like:
+3. **Redeploy** the bot service.
+
+4. **Stop or delete** the separate **`@jjk/web`** service (so you are not paying for a second empty save).
+
+5. Open the **bot service URL** in a browser — that is your dashboard now.
+
+6. Discord OAuth redirect must use that same URL:
+   ```text
+   https://your-bot-service.up.railway.app/oauth/callback
+   ```
+
+Bot and web now share `@jjk/discord-bot-volume` automatically.
+
+---
+
+## Fix B — Bot + web + API in **one** service (2D + one save)
+
+If you also want **2D and bot** on the same `jjk.db` without copying files:
+
+1. Use the **bot** service (or rename it `jjk-stack`).
+2. Variables:
+   ```env
+   SERVICE=stack
+   DATABASE_PATH=/data/jjk.db
+   API_PORT=3848
+   ```
+   Plus all bot/web/api secrets.
+3. **Networking:** Railway’s public `PORT` goes to the **web** UI. Add a **TCP proxy** (or second public URL) on port **3848** for the API so `VITE_API_URL` can reach it.
+4. **Delete** separate `@jjk/web` and `jjk-api` services after this works.
+5. Redeploy.
+
+This is more setup; **Fix A** plus a separate API is simpler if 2D progress can stay on the API volume until you migrate DB.
+
+---
+
+## Fix C — PostgreSQL (later, best long-term)
+
+All services connect to one **Railway Postgres** instead of SQLite files. Not implemented in this repo yet; would need a schema migration.
+
+---
+
+## Verify one save
+
+Logs should show the same file size on processes in the **same** service:
 
 ```text
 [jjk-db] service=bot path=/data/jjk.db exists=true size=123456
-[jjk-db] /data mounted=true
-```
-
-```text
 [jjk-db] service=web path=/data/jjk.db exists=true size=123456
-[jjk-db] /data mounted=true
 ```
 
-**The `size=` number must be the same** (or very close) on bot and web right after both start. If one says `size=0` or `exists=false` while the other has a big size, they’re still on separate storage.
+Test: change coins on the site → `/profile` in Discord matches.
 
-## Merge two saves (optional)
+---
 
-If you already played on both and care about one side’s progress:
+## Merge two existing saves
 
-1. Decide which DB is the “real” save (usually the bot one with more play time).
-2. Railway → that service’s volume → download `/data/jjk.db` (or use CLI).
-3. Upload that file to the **shared** volume as `/data/jjk.db`.
-4. Redeploy all services.
+1. Pick the volume with the character you want to keep (often **bot**).
+2. Download `/data/jjk.db` from that volume (Railway volume UI / CLI).
+3. For other services you still run separately: upload that file to their volume (only if you must keep multiple services).
+4. With **Fix A**, you only need the bot volume.
 
-There is no automatic merge — pick one file.
+---
 
 ## Local dev
 
-One folder: `DATABASE_PATH=./data/jjk.db` in `.env` for both `npm run start:bot` and `npm run start:web`.
+One file: `DATABASE_PATH=./data/jjk.db` for both `npm run start:bot` and `npm run start:web`.
