@@ -2,6 +2,9 @@ import { SlashCommandBuilder } from 'discord.js';
 
 export function buildSlashCommands() {
   return [
+    new SlashCommandBuilder()
+      .setName('play2d')
+      .setDescription('Launch the 2D game (Discord Activity)'),
     new SlashCommandBuilder().setName('profile').setDescription('Your sorcerer profile'),
     new SlashCommandBuilder().setName('status').setDescription('CE, timers, blockers'),
     new SlashCommandBuilder()

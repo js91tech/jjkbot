@@ -41,7 +41,11 @@ Same application as your bot.
 | 3 | **Application ID** → `DISCORD_CLIENT_ID` on API + `VITE_DISCORD_CLIENT_ID` on 2D build |
 | 4 | **OAuth2** → redirect `https://<web>/oauth/callback` (unchanged for dashboard) |
 
-Tell players: **Join voice → Activities → your activity name.**
+Tell players (any of these):
+
+- **Voice channel → Activities** (rocket icon) → your game  
+- **App launcher** (grid icon) → **Launch** (not the long command list)  
+- Type **`/play2d`** in chat (opens the Activity if Embedded App + URL mapping are set)
 
 ---
 

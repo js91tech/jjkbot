@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { Client, GatewayIntentBits, Events, InteractionResponseType } from 'discord.js';
 import { GameService } from '@jjk/game-core';
 import { handleCommand } from './commands.js';
 import { registerSlashCommands } from './register-slash.js';
@@ -49,6 +49,10 @@ client.once(Events.ClientReady, async (c) => {
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   try {
+    if (interaction.commandName === 'play2d') {
+      await interaction.reply({ type: InteractionResponseType.LaunchActivity });
+      return;
+    }
     const result = await handleCommand(interaction);
     if (result.embed) {
       await interaction.reply({ embeds: [result.embed], ephemeral: result.ephemeral });
