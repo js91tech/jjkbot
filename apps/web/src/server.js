@@ -5,6 +5,7 @@ import express from 'express';
 import session from 'express-session';
 import { GameService } from '@jjk/game-core';
 import { gifForAction, HERO_IMAGE } from './action-media.js';
+import { createApiProxy, resolveApiProxyTarget } from './api-proxy.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '../../..');
@@ -84,6 +85,12 @@ app.use(
   })
 );
 app.use('/public', express.static(path.join(__dirname, 'public')));
+
+const apiProxyTarget = resolveApiProxyTarget();
+if (apiProxyTarget) {
+  console.log(`Web: /api/* → ${apiProxyTarget} (Discord Activity can map /api to this same domain)`);
+  app.use('/api', createApiProxy(apiProxyTarget));
+}
 
 app.get('/health', (_req, res) => {
   res.status(200).json({ ok: true, service: 'web' });

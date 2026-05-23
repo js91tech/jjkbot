@@ -81,6 +81,7 @@ if (service === 'botweb') {
   ]);
 } else if (service === 'stack') {
   console.log('stack: bot + web + API in one container (one volume; web uses PORT, API uses API_PORT)');
+  console.log('stack: expose ONE public URL → dashboard + Discord URL mapping /api → same host');
   if (!process.env.API_PORT) process.env.API_PORT = '3848';
   runMany([
     { workspace: '@jjk/discord-bot', label: 'bot' },
